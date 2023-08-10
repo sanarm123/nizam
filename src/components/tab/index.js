@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Home from "../../screens/Home";
 import Profile from "../../screens/Profile";
 import Messages from "../../screens/Messages";
+import Post from "../../screens/Post";
 import Notifications from "../../screens/Notifications";
 
 import Load from "../Load";
@@ -46,15 +47,17 @@ export default function AppTab() {
         }}
       />
       <Tab.Screen
-        name="Load"
-        component={Load}
+        name="Post"
+        component={Post}
         listeners={({ navigation }) => ({
+          headerShown:true,
           tabPress: (e) => {
-            e.preventDefault();
-            navigation.navigate("Post");
+          //  e.preventDefault();
+           // navigation.navigate("Post");
           },
         })}
         options={{
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <Ionicons
               name="ios-add-circle"

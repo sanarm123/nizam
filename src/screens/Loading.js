@@ -60,7 +60,6 @@ export default function Loading() {
 
     <Stack.Navigator headerMode="none" initialRouteName="login">
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-      
         <Stack.Screen name="login" component={Login} />
     </Stack.Navigator>
   

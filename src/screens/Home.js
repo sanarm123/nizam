@@ -50,25 +50,20 @@ export default function Home() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ width: 35, height: 20 }} />
-        <Text style={styles.textHeader}>Feed</Text>
+        <Text style={styles.textHeader}>Posts</Text>
         <TouchableOpacity
           style={{ height: 35, width: 35, borderRadius: 35 / 2 }}
         >
-          <Ionicons name="ios-person-add" size={26} color="#333333" />
+        
         </TouchableOpacity>
       </View>
       {hidden ? (
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <Image
-            style={{ width: 200, height: 200 }}
-            source={{
-              uri: "https://img.icons8.com/bubbles/200/000000/cancel-2.png",
-            }}
-          />
+         
           <Text style={{ fontSize: 20, fontWeight: "500", color: "#33333350" }}>
-            Estamos sem post para mostrar :(
+            Posts
           </Text>
         </View>
       ) : (
@@ -116,12 +111,7 @@ export default function Home() {
                         style={{ marginRight: 16 }}
                       />
                     </TouchableOpacity>
-                    <Ionicons
-                      name="ios-chatboxes"
-                      size={24}
-                      color={"#73788B"}
-                      style={{ marginRight: 16 }}
-                    />
+                    
                   </View>
                 </View>
               </View>

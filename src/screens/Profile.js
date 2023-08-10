@@ -19,9 +19,10 @@ import getImage from "../utils/getImageAdorable";
 import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-
 import Fire from "../components/Fire/index2";
+import { CommonActions, useNavigation,StackActions } from "@react-navigation/native";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
+import Login from "./Login";
 
 const data = Fire.shared.fakeData;
 
@@ -31,6 +32,9 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [infos, setInfos] = useState({});
 
+  const navigation = useNavigation();
+
+
   async function test() {
     //await AdMobRewarded.setAdUnitID("ca-app-pub-5014682151271774/3906623363");
     //await AdMobRewarded.requestAdAsync();
@@ -39,35 +43,43 @@ export default function Profile() {
 
   const [userInfo, setUserInfo] = useState();
 
+  function sinoutMe(){
 
+   
+      try {
+       
+
+        AsyncStorage.removeItem('@user');
+
+
+       navigation.dispatch(StackActions.replace('Thankyou'));
+       
+         
+      } catch(e) {
+        alert("error");
+      }
+       console.log('Done')
+
+  }
   
 
   useEffect(async () => {
     console.disableYellowBox = true;
+    AsyncStorage.getItem("@user").then((response) => {
+  
+    let myData=JSON.parse(response);
 
-   // const userJSON= await AsyncStorage.getItem("@user");
-
-
-
-   AsyncStorage.getItem("@user").then((response) => {
-   // alert(response);
-   // console.log(response);
-   //alert(JSON.parse(response).displayName);
-
-   let myData=JSON.parse(response);
-
-   // alert(myData.displayName);
-
-   //setUserInfo(myData);
+ 
 
     setUserName(myData.displayName);
-
-
  });
     
    
 
     //console.log("Profile:"+userJSON);
+
+    //alert(userInfo.displayName);
+
 
     setUserName(userInfo.displayName);
 
@@ -142,7 +154,8 @@ export default function Profile() {
         </View>
       </View>
     
-      <Button title="sair" onPress={() => Fire.shared.singOut()} />
+      <Button title="Logout" onPress={() => sinoutMe()} />
+      
     </ScrollView>
   );
 }

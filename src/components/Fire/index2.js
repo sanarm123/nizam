@@ -83,6 +83,9 @@ class Fire {
     });
   };
 
+  
+
+
   sendMessage = (messages) => {
     messages.forEach((item) => {
       const message = {
@@ -129,7 +132,12 @@ class Fire {
   }
 
   get singOut() {
+
+
+
     return firebase.auth().signOut();
+
+
   }
 
   get firestore() {

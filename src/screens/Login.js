@@ -1,18 +1,9 @@
-import React, { useState,useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState,useEffect,useCallback } from "react";
+import { useNavigation,useFocusEffect,useIsFocused ,StackActions} from "@react-navigation/native";
 import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-
-import AppTab from "../components/tab";
-
-
-
-import Post from "./Post";
-import Contacts from "./Contacts";
-import Message from "./Messages";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 import {
   View,
@@ -31,6 +22,8 @@ import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-st
 
 export default function Login() {
 
+
+
   const [userInfo, setUserInfo] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,45 +32,91 @@ export default function Login() {
 
   const navigation = useNavigation();
 
-
- // const Stack = createStackNavigator();
-
-
-  const checkLocalUser=async()=>{
-
-
-
-    try {
-
-     const userJSON= await AsyncStorage.getItem("@user");
-
-     console.log("LogCheck mine:"+userJSON);
-
-     //alert(JSON.parse(userJSON)!=null);
-
-
-     //const userData=JSON.parse(userJSON)!=null?JSON.parse(userJSON):null;
-
-     
-
  
+ 
+  const checkLocalUser=async()=>{
+   
+    const userJSON= await AsyncStorage.getItem("@user");
 
-    
+    setLoading(true);
+    if(JSON.parse(userJSON)!=null){
 
-     if(JSON.parse(userJSON)!=null){
-      console.log("sucess");
-      setUserInfo(JSON.parse(userJSON));
-      //alert(JSON.stringify(userInfo));
-      setLoading(false);
-      navigation.navigate("AppTab", { screen: "home" });
-      
-    }
+      let tempdata=JSON.parse(userJSON);
+    // console.log("sucess");
+     setUserInfo(tempdata);
+     //alert(JSON.stringify(userInfo));
+     setLoading(false);
+   //  navigation.navigate("AppTab", { screen: "home" });
+
+     navigation.dispatch(StackActions.replace('AppTab'));
+     
+   }
     else
     {
-      console.log("Fail");
+
+      setLoading(false);
+   
+    }
+
+  }
+
+
+  function  handleLogin() {
+    setLoading(true);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(function () {
+        setLoading(false);
+        navigation.navigate("AppTab", { screen: "home" });
+
+      
+      })
+      .catch((err) => {
+        alert(err.message);
+
+        setLoading(false);
+        setError(err.message);
+      });
+  }
+
+  LayoutAnimation.easeInEaseOut();
+
+
+  useEffect( ()=>{
+    
+    checkLocalUser();
+
+    const unsubsc= firebase.auth().onAuthStateChanged(async (user)=>{
+         if(user){
+             setUserInfo(user);
+             await AsyncStorage.setItem("@user",JSON.stringify(user));
+  
+         }
+         else
+         {
+          //
+         }
+  
+     })
+  
+     return ()=>unsubsc();
+  
+   },[])
+
+   
+
+   if(userInfo===null){
+      // alert("Going to Login");
       return (
         <View style={styles.container}>
           <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+
+          {loading ? (
+              <ActivityIndicator size="small" color="#FFF" />
+            ) : (
+              <FontAwesome5 name="exchange-alt" size={22} color="#FFF" />
+            )}
           <View style={{ width: "100%", height: "auto" }}>
             <Image
               source={require("../../assets/authHeader.png")}
@@ -109,7 +148,7 @@ export default function Login() {
               </View>
     
               <View style={{ marginTop: 32 }}>
-                <Text style={styles.inputTitle}>Senha</Text>
+                <Text style={styles.inputTitle}>Password</Text>
                 <TextInput
                   style={styles.input}
                   secureTextEntry
@@ -133,10 +172,10 @@ export default function Login() {
             </TouchableOpacity>
     
             <TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }}>
-              <Text style={{ color: "#414959", fontSize: 13 }}>
+              <Text style={{ color: "#414959", fontSize: 18 }} onPress={() => navigation.navigate('RegisterScreen')}>
                 Sing up?{" "}
                 <Text
-                  onPress={() => navigation.navigate('RegisterScreen')}
+                  
                   style={{ fontWeight: "500", color: "#E9446A" }}
                 >
                   Go
@@ -150,59 +189,7 @@ export default function Login() {
           />
         </View>
       );
-    }
-
-
-    } catch (e) {
-      
-      alert(e.message);
-
-    }
-
-  }
-
-
-  useEffect( ()=>{
-    
-    checkLocalUser();
-
-    const unsubsc= firebase.auth().onAuthStateChanged(async (user)=>{
-         if(user){
-             setUserInfo(user);
-             await AsyncStorage.setItem("@user",JSON.stringify(user));
-  
-         }
-         else
-         {
-          //
-         }
-  
-     })
-  
-     return ()=>unsubsc();
-  
-   },[])
-
-
-
-  function  handleLogin() {
-    setLoading(true);
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(function () {
-        setLoading(false);
-        navigation.navigate("AppTab", { screen: "home" });
-      })
-      .catch((err) => {
-        alert(err.message);
-
-        setLoading(false);
-        setError(err.message);
-      });
-  }
-
-  LayoutAnimation.easeInEaseOut();
+   }
 
  
 
@@ -259,7 +246,8 @@ const styles = StyleSheet.create({
   },
   inputTitle: {
     color: "#8A8F9E",
-    fontSize: 10,
+    fontSize: 12,
+    fontWeight:"bold",
     textTransform: "uppercase",
   },
   input: {

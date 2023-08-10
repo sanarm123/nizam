@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useIsFocused } from "@react-navigation/native";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
+import { ToastProvider } from "react-native-toast-notifications";
 
-import "firebase/firestore";
+import firebase from "firebase/compat/app";
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 import Fire from "../components/Fire/index2";
 
@@ -19,31 +22,95 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  FlatList,
+  ActivityIndicator
 } from "react-native";
 
+import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
+const firebaseConfig = require("../config/firebaseConfig");
+// "add moment(item.timestamp).fromNow()" in code "item.node_id"
+const data = Fire.shared.fakeData;
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+ }
+
+ 
+
 export default function Post() {
+
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
+  const [posts, setPosts] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState();
+
+ 
+
+
   const [photoUrl, setPhotoUrl] = useState(
     "https://img.icons8.com/material-outlined/24/000000/user--v1.png"
   );
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    getPhotoPermissions();
-    setPhotoUrl(Fire.shared.userData.photoURL);
-  }, []);
 
-  async function getPhotoPermissions() {
-    if (Constants.platform.android) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+ 
 
-      if (status != "granted") {
-        Alert.alert("Erro", "Nos precisamos do acessoa sua camera para isso");
-      }
-    }
+   function SplashScreen() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Please Wait while loading...</Text>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
+ 
+
+  useEffect( async ()=>{
+
+
+    async function fetchData() {
+      const list = [];
+  
+      let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(10);
+  
+      query.get()
+        .then((docs) => {
+  
+          docs.forEach((doc) => {
+            
+            list.push(doc.data());
+  
+           // console.log(doc.data());
+  
+          })
+  
+         // alert(list);
+          setPosts(list);
+  
+          if(posts!=null){
+            posts.forEach((doc)=>{
+              console.log("Reading from Posts:"+JSON.stringify(doc));
+            });
+          }
+       
+        
+           setIsLoading(false);
+  
+        }).catch((err) => {
+          setIsLoading(false);
+          console.log(err)
+        })
+    }
+      // ...
+    
+    fetchData();
+  
+  
+    // return ()=>getPosts();
+  
+   },[])
 
   async function handlePost() {
     const data = {
@@ -78,58 +145,67 @@ export default function Post() {
     }
   }
 
+  useEffect(async () => {
+    //console.disableYellowBox = true;
+    AsyncStorage.getItem("@user").then((response) => {
+
+        //alert(response);
+    
+        let myData=JSON.parse(response);
+
+        setUserInfo(myData);
+    });
+        
+    
+
+  }, []);
+
+  function PostComment() {
+
+    setIsLoading(true);
+
+    firebase.firestore().collection("posts").add({
+      text: text,
+      created: firebase.firestore.FieldValue.serverTimestamp(),
+      owner:userInfo.uid,
+      owner_name: userInfo.displayName
+    }).then(async (doc) => {
+        setIsLoading(false);
+
+        Alert.alert("Info", "Successfully uploaded");
+
+    }).catch((err) => {
+        setIsLoading(false);
+        Alert.alert("Error", "Failed to load");
+    });
+
+  }
+
+  if (isLoading) {
+    // We haven't finished checking for the token yet
+    return <SplashScreen />;
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={{ alignSelf: "flex-start" }}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="md-arrow-back" size={34} color="#D8D9DB" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ alignSelf: "center" }}
-          onPress={() => handlePost()}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 22 }}>Post</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Image
-          style={{ height: 70, width: 70, borderRadius: 70 / 2 }}
-          source={{
-            uri: photoUrl,
-          }}
-        />
-        <TextInput
-          autoFocus
-          placeholder="Deseja compartilhar algo?"
-          value={text}
-          onChangeText={setText}
-          style={{ paddingHorizontal: 10 }}
-        />
-      </View>
-
-      <TouchableOpacity style={styles.avatar} onPress={() => pickImage()}>
-        <Ionicons name="md-camera" size={32} color="#D8D9D2" />
-      </TouchableOpacity>
-
-      <View
-        style={{
-          marginHorizontal: 32,
-          marginTop: 32,
-          height: 300,
-          width: "90%",
-        }}
-      >
-        <Image
-          source={{ uri: image }}
-          fadeDuration={1000}
-          style={{ flex: 1 }}
-        />
-      </View>
-      <Button title="teste" onPress={() => Alert.alert("teste", image)} />
+        <View style={{flex:1}}>
+            <TextInput
+            placeholder="What's on your mind?"
+            multiline
+            value={text}
+            onChangeText={setText}
+            numberOfLines={4}
+            style={{margin:20}}
+            
+            />
+           <Button
+            onPress={PostComment}
+            title="Submit"
+           
+            accessibilityLabel="Post "
+            />
+        </View>
+          
     </View>
   );
 }
@@ -137,7 +213,7 @@ export default function Post() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    marginTop:20,
     justifyContent: "space-between",
   },
   header: {
@@ -162,5 +238,36 @@ const styles = StyleSheet.create({
   photo: {
     alignItems: "flex-end",
     marginHorizontal: 32,
+  },
+  feed: {
+    marginHorizontal: 16,
+  },
+  feedItem: {
+    backgroundColor: "#FFF",
+    borderRadius: 5,
+    padding: 8,
+    flexDirection: "row",
+    marginVertical: 8,
+  },
+  name: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#454D65",
+  },
+  timestamp: {
+    fontSize: 11,
+    color: "#C4C6CE",
+    marginTop: 4,
+  },
+  post: {
+    marginTop: 16,
+    fontSize: 14,
+    color: "#838899",
+  },
+  postImage: {
+    width: "auto",
+    height: 150,
+    borderRadius: 5,
+    marginVertical: 16,
   },
 });

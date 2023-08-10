@@ -131,10 +131,10 @@ export default function Register() {
         </TouchableOpacity>
 
         <TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }}>
-          <Text style={{ color: "#414959", fontSize: 13 }}>
+          <Text style={{ color: "#414959", fontSize: 18 }}  onPress={() => navigation.navigate("login")}>
             go back to login?{" "}
             <Text
-              onPress={() => navigation.navigate("login")}
+             
               style={{ fontWeight: "500", color: "#E9446A" }}
             >
               Login
