@@ -12,9 +12,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   LayoutAnimation,
+  ActivityIndicator,
 } from "react-native";
 
 import Fire from "../components/Fire/index2";
+import firebase from "firebase/compat/app";
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import { RefreshControl } from "react-native-gesture-handler";
 
 // "add moment(item.timestamp).fromNow()" in code "item.node_id"
 const data = Fire.shared.fakeData;
@@ -23,12 +28,49 @@ export default function Home() {
   const [posts, setPosts] = useState(data);
   const [likeIcon, setLikeIcon] = useState("ios-heart-empty");
   const [likeColor, setLikeColor] = useState("#73788B");
+  const [isLoading, setIsLoading] = useState(false);
 
+  async function fetchData() {
 
-  useEffect( ()=>{
+    setIsLoading(true);
+    const list = [];
 
+    let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(10);
 
-  })
+    query.get()
+      .then((docs) => {
+
+        docs.forEach((doc) => {
+          
+          list.push(doc.data());
+
+          console.log(doc.data());
+
+        })
+
+       // alert(list);
+        setPosts(list);
+
+        if(posts!=null){
+          posts.forEach((doc)=>{
+            console.log("Reading from Posts:"+JSON.stringify(doc));
+          });
+        }
+     
+      
+         setIsLoading(false);
+
+      }).catch((err) => {
+        setIsLoading(false);
+        console.log(err)
+      })
+  }
+    
+  useEffect( async ()=>{
+    
+    fetchData();
+  
+   },[])
 
   const hidden = false;
   useEffect(() => {
@@ -44,6 +86,19 @@ export default function Home() {
       setLikeColor("#73788B");
     }
     item.site_admin = true;
+  }
+
+  function SplashScreen() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Please Wait while loading...</Text>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+  if (isLoading) {
+    // We haven't finished checking for the token yet
+    return <SplashScreen />;
   }
 
   return (
@@ -88,36 +143,31 @@ export default function Home() {
                     }}
                   >
                     <View>
-                      <Text style={styles.name}>{item.login}</Text>
-                      <Text style={styles.timestamp}>{item.node_id}</Text>
+                      <Text style={styles.name}>{item.owner_name}</Text>
+                      <Text style={styles.timestamp}>{item.createdAt}</Text>
                     </View>
 
-                    <Ionicons name="ios-more" size={24} color="#73788B" />
+                   
                   </View>
 
-                  <Text style={styles.post}>{item.url}</Text>
+                  <Text style={styles.post}>{item.text}</Text>
                   <Image
-                    source={{ uri: item.avatar_url }}
+                    source={{ uri: item.imageLink }}
                     resizeMode="cover"
                     style={styles.postImage}
                   />
 
-                  <View style={{ flexDirection: "row" }}>
-                    <TouchableOpacity onPress={() => like(item)}>
-                      <Ionicons
-                        name={likeIcon}
-                        size={24}
-                        color={likeColor}
-                        style={{ marginRight: 16 }}
-                      />
-                    </TouchableOpacity>
-                    
-                  </View>
+                
                 </View>
               </View>
               
             </>
           )}
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={fetchData}>
+
+            </RefreshControl>
+          }
         />
       )}
     </View>
@@ -152,6 +202,7 @@ const styles = StyleSheet.create({
   },
   feed: {
     marginHorizontal: 16,
+    marginLeft:-5
   },
   feedItem: {
     backgroundColor: "#FFF",
@@ -164,7 +215,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    marginRight: 16,
+    
   },
   name: {
     fontSize: 15,
@@ -185,6 +236,7 @@ const styles = StyleSheet.create({
     width: "auto",
     height: 150,
     borderRadius: 5,
+    alignItems:'center',
     marginVertical: 16,
   },
 });

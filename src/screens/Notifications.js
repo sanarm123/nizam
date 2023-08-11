@@ -13,7 +13,7 @@ export default function Notifications() {
       />
       <Text style={styles.title}>Notifications :)</Text>
       <Text style={styles.sub}>
-        
+        test
       </Text>
     </View>
   );

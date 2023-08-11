@@ -9,6 +9,9 @@ import { ToastProvider } from "react-native-toast-notifications";
 import firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
+import { ref,uploadBytesResumable,getStorage,getDownloadURL } from "firebase/storage";
+
 
 import Fire from "../components/Fire/index2";
 
@@ -27,6 +30,7 @@ import {
 } from "react-native";
 
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
+
 const firebaseConfig = require("../config/firebaseConfig");
 // "add moment(item.timestamp).fromNow()" in code "item.node_id"
 const data = Fire.shared.fakeData;
@@ -42,9 +46,11 @@ export default function Post() {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [userInfo, setUserInfo] = useState();
-
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+  const [progress, setProgress] = useState(0);
  
 
 
@@ -67,50 +73,7 @@ export default function Post() {
   }
  
 
-  useEffect( async ()=>{
 
-
-    async function fetchData() {
-      const list = [];
-  
-      let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(10);
-  
-      query.get()
-        .then((docs) => {
-  
-          docs.forEach((doc) => {
-            
-            list.push(doc.data());
-  
-           // console.log(doc.data());
-  
-          })
-  
-         // alert(list);
-          setPosts(list);
-  
-          if(posts!=null){
-            posts.forEach((doc)=>{
-              console.log("Reading from Posts:"+JSON.stringify(doc));
-            });
-          }
-       
-        
-           setIsLoading(false);
-  
-        }).catch((err) => {
-          setIsLoading(false);
-          console.log(err)
-        })
-    }
-      // ...
-    
-    fetchData();
-  
-  
-    // return ()=>getPosts();
-  
-   },[])
 
   async function handlePost() {
     const data = {
@@ -132,6 +95,21 @@ export default function Post() {
       });
   }
 
+  const takePhotoFromCamera = () => {
+    ImagePicker.openCamera({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then((image) => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+
+     // alert(imageUri);
+      setImage(imageUri);
+    });
+  };
+
+
   async function pickImage() {
     const resul = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -140,17 +118,108 @@ export default function Post() {
       quality: 1,
     });
 
+   // alert(resul.uri);
+
     if (!resul.cancelled) {
       setImage(resul.uri);
     }
   }
 
+   const uriToBlob = (uri) => {
+    return new Promise((resolve, reject) => {
+       const xhr = new XMLHttpRequest()
+       xhr.onload = function () {
+         // return the blob
+         resolve(xhr.response)
+       }
+       xhr.onerror = function () {
+         reject(new Error('uriToBlob failed'))
+       }
+       xhr.responseType = 'blob'
+       xhr.open('GET', uri, true)
+   
+       xhr.send(null)})}
+
+  const uploadImage = async () => {
+
+
+    if( image == null ) {
+      return null;
+    }
+
+    setIsLoading(true);
+   
+    const uploadUri = image;
+
+   // alert(image);
+
+   const blobFile = await uriToBlob(uploadUri);
+
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name
+    const extension = filename.split('.').pop(); 
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    
+
+    setUploading(true);
+    setTransferred(0);
+
+    const storageMain = firebase.storage().ref(`photos/${filename}`);
+    const storageRef = ref(storageMain, `photos/${filename}`);
+
+    //alert('moving');
+
+    const task =uploadBytesResumable(storageRef,blobFile);
+
+   
+    
+  //  alert('moving test');
+
+
+    // Set transferred state
+    task.on('state_changed', (taskSnapshot) => {
+
+      console.log('taskonchanged');
+
+      const progress =
+          (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        setProgress(progress.toFixed());
+
+    });
+
+    try {
+      await task;
+
+      const url = getDownloadURL(task.snapshot.ref);
+    
+      //alert(url);
+      setUploading(false);
+      setImage(null);
+      setIsLoading(false); 
+      // Alert.alert(
+      //   'Image uploaded!',
+      //   'Your image has been uploaded to the Firebase Cloud Storage Successfully!',
+      // );
+      return url;
+
+    } catch (e) {
+
+      console.log(e);
+      setIsLoading(false);
+      return null;
+    }
+
+  };
+
+
+
   useEffect(async () => {
     //console.disableYellowBox = true;
     AsyncStorage.getItem("@user").then((response) => {
-
-        //alert(response);
-    
         let myData=JSON.parse(response);
 
         setUserInfo(myData);
@@ -160,17 +229,21 @@ export default function Post() {
 
   }, []);
 
-  function PostComment() {
+  const PostComment= async ()=> {
+    const imageUrl = await uploadImage();
+
 
     setIsLoading(true);
-
+  
     firebase.firestore().collection("posts").add({
       text: text,
       created: firebase.firestore.FieldValue.serverTimestamp(),
       owner:userInfo.uid,
+      imageLink:imageUrl,
       owner_name: userInfo.displayName
     }).then(async (doc) => {
         setIsLoading(false);
+        setText('');
 
         Alert.alert("Info", "Successfully uploaded");
 
@@ -189,15 +262,24 @@ export default function Post() {
   return (
     <View style={styles.container}>
         <View style={{flex:1}}>
-            <TextInput
-            placeholder="What's on your mind?"
-            multiline
-            value={text}
-            onChangeText={setText}
-            numberOfLines={4}
-            style={{margin:20}}
+            <View style={{flexDirection:"row",justifyContent:'flex-start'}}>
+                <TextInput
+                placeholder="What's on your mind?"
+                multiline
+                value={text}
+                onChangeText={setText}
+                numberOfLines={5}
+                style={{margin:20,width:"80%",marginTop:-20, height:'auto',justifyContent:'flex-start'}}
+                
+                />
+
+             <TouchableOpacity style={styles.avatar} onPress={() => pickImage()}>
+                <Ionicons name="md-camera" size={32} color="black" />
+             </TouchableOpacity>
+            </View>
+
             
-            />
+          
            <Button
             onPress={PostComment}
             title="Submit"
@@ -205,6 +287,8 @@ export default function Post() {
             accessibilityLabel="Post "
             />
         </View>
+
+      
           
     </View>
   );
@@ -227,7 +311,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#D8D9DB",
   },
   inputContainer: {
-    margin: 20,
+   
     flexDirection: "row",
   },
   avatar: {

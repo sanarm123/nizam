@@ -41,9 +41,8 @@ export default function AppTab() {
         component={Messages}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-chatboxes" color={color} size={26} />
+            <Ionicons name="ios-notifications" color={color} size={26} />
           ),
-          tabBarVisible: false,
         }}
       />
       <Tab.Screen
