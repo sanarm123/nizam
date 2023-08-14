@@ -20,45 +20,46 @@ import firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { RefreshControl } from "react-native-gesture-handler";
+import { list } from "firebase/storage";
 
 // "add moment(item.timestamp).fromNow()" in code "item.node_id"
 const data = Fire.shared.fakeData;
 
 export default function Home() {
-  const [posts, setPosts] = useState(data);
+  const [posts, setPosts] = useState([]);
   const [likeIcon, setLikeIcon] = useState("ios-heart-empty");
   const [likeColor, setLikeColor] = useState("#73788B");
   const [isLoading, setIsLoading] = useState(false);
+  const [lastDoc,setLastDoc]=useState();
+  const [lastPost,setLastPost]=useState(false);
 
   async function fetchData() {
 
     setIsLoading(true);
-    const list = [];
+    const list =[];
 
-    let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(10);
+    let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(3);
 
     query.get()
-      .then((docs) => {
+      .then((collections) => {
 
-        docs.forEach((doc) => {
+        collections.forEach((doc) => {
           
           list.push(doc.data());
-
           console.log(doc.data());
 
         })
 
-       // alert(list);
-        setPosts(list);
 
-        if(posts!=null){
-          posts.forEach((doc)=>{
-            console.log("Reading from Posts:"+JSON.stringify(doc));
-          });
-        }
-     
+        //alert(JSON.stringify(list));
       
-         setIsLoading(false);
+        setPosts(list);
+        setIsLoading(false);
+        const lastDoc=collections.docs[collections.docs.length-1];
+        setLastDoc(lastDoc);
+
+       // alert(JSON.stringify(lastDoc));
+
 
       }).catch((err) => {
         setIsLoading(false);
@@ -71,6 +72,51 @@ export default function Home() {
     fetchData();
   
    },[])
+
+
+  async function FetchMore(){
+   
+    const list = posts;
+
+ let query = firebase
+ .firestore()
+ .collection("posts")
+ .orderBy("created", "desc").startAfter(lastDoc).limit(3);
+
+ query.get()
+   .then((collections) => {
+     const isCollectionEmpty=collections.size===0;
+
+    
+     if(!isCollectionEmpty){
+       const poststest=collections.docs
+
+       collections.docs.length==0?setLastPost(true):setLastPost(false);
+
+       poststest.forEach((doc)=>{
+            list.push(doc.data());
+       });
+
+       setPosts(list);
+       setIsLoading(false);
+       const lastDoc=collections.docs[collections.docs.length-1];
+       setLastDoc(lastDoc);
+      // alert(JSON.stringify(lastDoc));
+
+     }
+     else
+     {
+       setIsLoading(false);
+       collections.docs.length==0?setLastPost(true):setLastPost(false);
+     }
+     
+   }).catch((err) => {
+     setIsLoading(false);
+     console.log(err)
+   })
+
+
+  }
 
   const hidden = false;
   useEffect(() => {
@@ -96,6 +142,14 @@ export default function Home() {
       </View>
     );
   }
+
+  function FoorScreen() {
+    if (isLoading) {
+      // We haven't finished checking for the token yet
+      return <SplashScreen />;
+    }
+  }
+
   if (isLoading) {
     // We haven't finished checking for the token yet
     return <SplashScreen />;
@@ -125,8 +179,8 @@ export default function Home() {
         <FlatList
           style={styles.feed}
           data={posts}
-          keyExtractor={(item) => String(item.id)}
-          showsVerticalScrollIndicator={false}
+          keyExtractor={(item,index) => String(item.index)}
+          showsVerticalScrollIndicator={true}
           renderItem={({ item, index }) => (
             <>
               <View style={styles.feedItem}>
@@ -163,11 +217,17 @@ export default function Home() {
               
             </>
           )}
+          
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={fetchData}>
 
             </RefreshControl>
           }
+       
+          ListFooterComponent={!lastPost&&<SplashScreen/>}
+          onEndReached={FetchMore}
+         
+
         />
       )}
     </View>
