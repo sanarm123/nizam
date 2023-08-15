@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect, Fragment, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
 
@@ -13,17 +13,44 @@ import {
   TouchableOpacity,
   LayoutAnimation,
   ActivityIndicator,
+  Modal,
+  Pressable,
+  Animated,
+  Dimensions
 } from "react-native";
 
+import ImageZoom from 'react-native-image-pan-zoom';
 import Fire from "../components/Fire/index2";
 import firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { RefreshControl } from "react-native-gesture-handler";
 import { list } from "firebase/storage";
+import {PinchGestureHandler, State } from 'react-native-gesture-handler';
+
 
 // "add moment(item.timestamp).fromNow()" in code "item.node_id"
 const data = Fire.shared.fakeData;
+
+
+const images = [{
+  // Simplest usage.
+  url: 'https://avatars2.githubusercontent.com/u/7970947?v=3&s=460',
+
+  // width: number
+  // height: number
+  // Optional, if you know the image size, you can set the optimization performance
+
+  // You can pass props to <Image />.
+  props: {
+      // headers: ...
+  }
+}, {
+  url: '',
+  props: {
+     
+  }
+}]
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -32,6 +59,13 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [lastDoc,setLastDoc]=useState();
   const [lastPost,setLastPost]=useState(false);
+  const [modalVisible,setModalVisible]=useState(false);
+
+  const [selectedItem,setSelectedItem]=useState(null);
+
+  const scale=new Animated.Value(1);
+
+  const screen = Dimensions.get('window')
 
   async function fetchData() {
 
@@ -143,6 +177,26 @@ export default function Home() {
     );
   }
 
+  onPinchEvent = Animated.event(
+    [
+      {
+        nativeEvent: { scale: scale }
+      }
+    ],
+    {
+      useNativeDriver: true
+    }
+  )
+
+  onPinchStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true
+      }).start()
+    }
+  }
+
   function FoorScreen() {
     if (isLoading) {
       // We haven't finished checking for the token yet
@@ -156,7 +210,9 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
+
+    <Fragment>
+      <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ width: 35, height: 20 }} />
         <Text style={styles.textHeader}>Posts</Text>
@@ -205,13 +261,13 @@ export default function Home() {
                   </View>
 
                   <Text style={styles.post}>{item.text}</Text>
-                  <Image
-                    source={{ uri: item.imageLink }}
-                    resizeMode="cover"
-                    style={styles.postImage}
-                  />
-
-                
+                  <TouchableOpacity onPress={()=>{setModalVisible(true);setSelectedItem(item)}}>
+                    <Image
+                      source={{ uri: item.imageLink }}
+                      resizeMode="cover"
+                      style={styles.postImage}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
               
@@ -229,8 +285,40 @@ export default function Home() {
          
 
         />
+        
       )}
     </View>
+
+    <Modal
+        visible={modalVisible}
+        animationType="fade"
+          transparent={true}
+        onRequestClose={() => setModalVisible(false)}>
+     <View style={styles.modal}>
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderContent}>
+                 <Text>Other header content</Text></View>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Text style={styles.modalHeaderCloseText}>X</Text>
+              </TouchableOpacity>
+            </View>
+            <View >
+            <ImageZoom cropWidth={Dimensions.get('window').width}
+                       cropHeight={Dimensions.get('window').height}
+                       imageWidth={200}
+                       imageHeight={200}>
+                <Image style={{width:200, height:200}}
+                       source={selectedItem!==null?{uri:selectedItem.imageLink}:null}/>
+            </ImageZoom>
+             
+         
+             
+            </View>
+          </View>
+      </Modal>
+
+    </Fragment>
+    
   );
 }
 
@@ -299,4 +387,40 @@ const styles = StyleSheet.create({
     alignItems:'center',
     marginVertical: 16,
   },
+  postZoomImage: {
+    width: "100%",
+    height: 500,
+    alignItems:'center',
+    marginVertical: 16,
+  },
+  modal: {
+    flex: 1,
+    margin: 10,
+    padding: 5,
+    backgroundColor: "white",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  /* The content of the modal takes all the vertical space not used by the header. */
+  modalContent: {
+    flex: 1
+  },
+  modalHeader: {
+    flexDirection: "row",
+  },
+  /* The header takes up all the vertical space not used by the close button. */
+  modalHeaderContent: {
+    flexGrow: 1,
+  },
+  modalHeaderCloseText: {
+    textAlign: "center",
+    paddingLeft: 5,
+    paddingRight: 5
+  }
 });
