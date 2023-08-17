@@ -30,7 +30,7 @@ export default function Messages({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Header text="Menssagens" />
+   
 
       {true ? (
         <>
@@ -57,12 +57,7 @@ export default function Messages({ navigation }) {
               </View>
             )}
           />
-          <TouchableOpacity
-            style={styles.chatButton}
-            onPress={() => navigation.navigate("Contacts")}
-          >
-            <FontAwesome5 name="users" size={30} color="#FFF" />
-          </TouchableOpacity>
+     
         </>
       ) : (
         <View

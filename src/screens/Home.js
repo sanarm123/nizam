@@ -67,6 +67,17 @@ export default function Home() {
 
   const screen = Dimensions.get('window')
 
+
+  function ago(time) {
+
+
+   let tm= new Date(time.seconds * 1000 + time.nanoseconds/1000000)
+
+    let difference = moment(tm).diff(moment());
+    return moment.duration(difference).humanize();
+  }
+
+
   async function fetchData() {
 
     setIsLoading(true);
@@ -224,8 +235,7 @@ export default function Home() {
       </View>
       {hidden ? (
         <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
          
           <Text style={{ fontSize: 20, fontWeight: "500", color: "#33333350" }}>
             Posts
@@ -253,8 +263,8 @@ export default function Home() {
                     }}
                   >
                     <View>
-                      <Text style={styles.name}>{item.owner_name}</Text>
-                      <Text style={styles.timestamp}>{item.createdAt}</Text>
+                      <Text style={styles.name}>Posted By:{item.owner_name}</Text>
+                      <Text style={styles.timestamp}>{ago(item.created)} ago</Text>
                     </View>
 
                    
@@ -294,20 +304,20 @@ export default function Home() {
         animationType="fade"
           transparent={true}
         onRequestClose={() => setModalVisible(false)}>
-     <View style={styles.modal}>
+          <View style={styles.modal}>
             <View style={styles.modalHeader}>
               <View style={styles.modalHeaderContent}>
-                 <Text>Other header content</Text></View>
+                 <Text>{selectedItem!==null?selectedItem.owner_name:''}</Text></View>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalHeaderCloseText}>X</Text>
               </TouchableOpacity>
             </View>
-            <View >
+            <View style={{marginLeft:-15}} >
             <ImageZoom cropWidth={Dimensions.get('window').width}
                        cropHeight={Dimensions.get('window').height}
-                       imageWidth={200}
-                       imageHeight={200}>
-                <Image style={{width:200, height:200}}
+                       imageWidth={Dimensions.get('window').width* 0.9}
+                       imageHeight={Dimensions.get('window').width* 0.9}  >
+                <Image style={{ width: '100%', height: '100%'}} resizeMode="cover"
                        source={selectedItem!==null?{uri:selectedItem.imageLink}:null}/>
             </ImageZoom>
              
@@ -420,6 +430,7 @@ const styles = StyleSheet.create({
   },
   modalHeaderCloseText: {
     textAlign: "center",
+    fontSize:20,
     paddingLeft: 5,
     paddingRight: 5
   }

@@ -1,67 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, {useState,useEffect} from 'react';
 import {
   View,
   Text,
-  Alert,
-  Image,
-  Button,
-  StyleSheet,
-  FlatList,
-  ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+  ImageBackground,
+  TextInput,
+  StyleSheet,
+} from 'react-native';
 
+import {useTheme} from 'react-native-paper';
 
-import { FontAwesome5 } from "@expo/vector-icons";
-import getImage from "../utils/getImageAdorable";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 
+import BottomSheet from 'reanimated-bottom-sheet';
+import Animated from 'react-native-reanimated';
 import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import Fire from "../components/Fire/index2";
 import { CommonActions, useNavigation,StackActions } from "@react-navigation/native";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
-import Login from "./Login";
-
-const data = Fire.shared.fakeData;
-
-export default function Profile() {
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [userName, setUserName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [infos, setInfos] = useState({});
-
-  const navigation = useNavigation();
+import { colors } from 'react-native-elements';
 
 
-  async function test() {
-    //await AdMobRewarded.setAdUnitID("ca-app-pub-5014682151271774/3906623363");
-    //await AdMobRewarded.requestAdAsync();
-    //await AdMobRewarded.showAdAsync();
-  }
-
+const Profile = () => {
   const [userInfo, setUserInfo] = useState();
 
-  function sinoutMe(){
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [infos, setInfos] = useState({});
+  const navigation = useNavigation();
 
-   
-      try {
-       
+  const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
+  const {colors} = useTheme();
 
-        AsyncStorage.removeItem('@user');
+ 
 
-
-       navigation.dispatch(StackActions.replace('Thankyou'));
-       
-         
-      } catch(e) {
-        alert("error");
-      }
-       console.log('Done')
-
-  }
+  const takePhotoFromCamera = () => {
   
+  }
+
+  const choosePhotoFromLibrary = () => {
+    
+  }
+
 
   useEffect(async () => {
     console.disableYellowBox = true;
@@ -72,6 +57,7 @@ export default function Profile() {
  
 
     setUserName(myData.displayName);
+    setEmail(myData.email);
  });
     
    
@@ -97,6 +83,7 @@ export default function Profile() {
   useEffect(() => {
     setLoading(false);
   }, [avatarUrl]);
+  
 
   async function refreshAvatar() {
     if (loading) {
@@ -113,118 +100,235 @@ export default function Profile() {
     test();
   }
 
-  return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}
-      style={styles.container}
-    >
-      <View style={{ marginTop: 32, alignItems: "center" }}>
-        <View style={styles.avatarContainer}>
-         
-          <TouchableOpacity
-            style={styles.tradeIcon}
-            onPress={() => refreshAvatar()}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="#FFF" />
-            ) : (
-              <FontAwesome5 name="exchange-alt" size={22} color="#FFF" />
-            )}
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.name}>Name: {userName}</Text>
-      </View>
 
-      <View style={styles.statusContainer}>
-        <View style={styles.status}>
-         
-        </View>
-        <View style={styles.status}>
-          <Text style={styles.statAmount}>
-            {infos?.folloers ? infos?.folloers : 0}
-          </Text>
-          <Text style={styles.statTitle}>seguidores</Text>
-        </View>
-        <View style={styles.status}>
-          <Text style={styles.statAmount}>
-            {infos?.following ? infos?.folowing : 0}
-          </Text>
-          <Text style={styles.statTitle}>seguindo</Text>
-        </View>
-      </View>
-    
-      <Button title="Logout" onPress={() => sinoutMe()} />
-      
-    </ScrollView>
-  );
+  function sinoutMe(){
+
+   
+    try {
+     
+
+      AsyncStorage.removeItem('@user');
+
+
+     navigation.dispatch(StackActions.replace('Thankyou'));
+     
+       
+    } catch(e) {
+      alert("error");
+    }
+     console.log('Done')
+
 }
+
+
+
+  renderInner = () => (
+    <View style={styles.panel}>
+      <View style={{alignItems: 'center'}}>
+        <Text style={styles.panelTitle}>Upload Photo</Text>
+        <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
+      </View>
+      <TouchableOpacity style={styles.panelButton} onPress={takePhotoFromCamera}>
+        <Text style={styles.panelButtonTitle}>Take Photo</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.panelButton} onPress={choosePhotoFromLibrary}>
+        <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.panelButton}
+       >
+        <Text style={styles.panelButtonTitle}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  renderHeader = () => (
+    <View style={styles.header}>
+      <View style={styles.panelHeader}>
+        <View style={styles.panelHandle} />
+      </View>
+    </View>
+  );
+
+ 
+
+  return (
+    <View style={styles.container}>
+
+  
+      <Animated.View style={{margin: 20}}>
+        <View style={{alignItems: 'center'}}>
+          <TouchableOpacity >
+            <View
+              style={{
+                height: 100,
+                width: 100,
+                borderRadius: 15,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+               
+                style={{height: 100, width: 100,backgroundColor:'blue',borderRadius:20}}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Icon
+                    name="camera"
+                    size={35}
+                    color="#fff"
+                    style={{
+                      opacity: 0.7,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderWidth: 1,
+                      borderColor: '#fff',
+                      borderRadius: 10,
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
+            {userName}
+          </Text>
+        </View>
+
+   
+       
+        <View style={styles.action}>
+          <Feather name="phone" color={colors.text} size={20} />
+          <Text
+            placeholder="Phone"
+            placeholderTextColor="#666666"
+            keyboardType="number-pad"
+            autoCorrect={false}
+            style={[
+              styles.textInput,
+              {
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+        <View style={styles.action}>
+          <FontAwesome name="envelope-o" color={colors.text} size={20} />
+          <Text
+            placeholder="Email"
+            placeholderTextColor="#666666"
+            keyboardType="email-address"
+            autoCorrect={false}
+            style={[
+              styles.textInput,
+              {
+                color: colors.text,
+                textAlign:'center',
+                verticalAlign:'middle'
+              },
+            ]}
+          >{email}</Text>
+        </View>
+     
+        
+        <TouchableOpacity style={styles.commandButton} onPress={() => sinoutMe()}>
+          <Text style={styles.panelButtonTitle}>Logout</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
+  );
+};
+
+export default Profile;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  avatarContainer: {
-    shadowColor: "#151734",
-    shadowRadius: 15,
-    shadowOpacity: 0.5,
-    borderWidth: 4,
-    borderRadius: 136 / 2,
-    borderColor: "#37373799",
+  commandButton: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    marginTop: 10,
   },
-  containerPosts: {
-    width: "95%",
-    height: "auto",
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#C3c5cd",
-    borderRadius: 2,
+  panel: {
+    padding: 20,
+    backgroundColor: '#FFFFFF',
+    paddingTop: 20,
+    // borderTopLeftRadius: 20,
+    // borderTopRightRadius: 20,
+    // shadowColor: '#000000',
+    // shadowOffset: {width: 0, height: 0},
+    // shadowRadius: 5,
+    // shadowOpacity: 0.4,
   },
-
-  avatar: {
-    width: 136,
-    height: 136,
-    borderRadius: 136 / 2,
+  header: {
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#333333',
+    shadowOffset: {width: -1, height: -3},
+    shadowRadius: 2,
+    shadowOpacity: 0.4,
+    // elevation: 5,
+    paddingTop: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
-  tradeIcon: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
+  panelHeader: {
+    alignItems: 'center',
+  },
+  panelHandle: {
     width: 40,
-    height: 40,
-    borderRadius: 40 / 2,
-    backgroundColor: "#4278ff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  name: {
-    marginTop: 24,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  statusContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    margin: 32,
-  },
-  status: {
-    alignItems: "center",
-    flex: 1,
-  },
-  statAmount: {
-    color: "#4F566D",
-    fontSize: 18,
-    fontWeight: "300",
-  },
-  statTitle: {
-    color: "#C3c5cd",
-    fontSize: 12,
-    fontWeight: "bold",
-    marginTop: 4,
-  },
-  post: {
-    height: 50,
-    borderWidth: StyleSheet.hairlineWidth,
+    height: 8,
     borderRadius: 4,
-    borderColor: "#333",
+    backgroundColor: '#00000040',
+    marginBottom: 10,
+  },
+  panelTitle: {
+    fontSize: 27,
+    height: 35,
+  },
+  panelSubtitle: {
+    fontSize: 14,
+    color: 'gray',
+    height: 30,
+    marginBottom: 10,
+  },
+  panelButton: {
+    padding: 13,
+    borderRadius: 10,
+    backgroundColor: '#FF6347',
+    alignItems: 'center',
+    marginVertical: 7,
+  },
+  panelButtonTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  action: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f2f2f2',
+    paddingBottom: 5,
+  },
+  actionError: {
+    flexDirection: 'row',
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#FF0000',
+    paddingBottom: 5,
+  },
+  textInput: {
+    flex: 1,
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
+    paddingLeft: 10,
+    color: '#05375a',
   },
 });

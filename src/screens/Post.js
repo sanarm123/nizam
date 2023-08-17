@@ -283,7 +283,7 @@ export default function Post() {
            <Button
             onPress={PostComment}
             title="Submit"
-           
+            disabled={text.length==0}
             accessibilityLabel="Post "
             />
         </View>

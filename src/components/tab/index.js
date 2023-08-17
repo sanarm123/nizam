@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,AntDesign } from "@expo/vector-icons";
 
 import Home from "../../screens/Home";
 import Profile from "../../screens/Profile";
@@ -37,11 +37,12 @@ export default function AppTab() {
         }}
       />
       <Tab.Screen
-        name="Messages"
+        name="People"
         component={Messages}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-notifications" color={color} size={26} />
+           
+            <Ionicons name="md-people-sharp" color={color} size={30} />
           ),
         }}
       />
