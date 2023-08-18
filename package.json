@@ -17,7 +17,7 @@
     "expo": "~49.0.5",
     "expo-image-picker": "~14.3.2",
     "expo-permissions": "~14.2.1",
-    "expo-splash-screen": "~0.20.4",
+    "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.1.0",
     "moment": "^2.29.4",
