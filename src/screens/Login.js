@@ -19,6 +19,7 @@ import {
 } from "react-native";
 
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
+import { getAuth,onAuthStateChanged,setPersistence,signInWithEmailAndPassword,browserLocalPersistence,} from "firebase/auth";
 
 export default function Login() {
 
@@ -38,6 +39,9 @@ export default function Login() {
    
     const userJSON= await AsyncStorage.getItem("@user");
 
+    console.log(userJSON);
+
+
     setLoading(true);
     if(JSON.parse(userJSON)!=null){
 
@@ -47,6 +51,8 @@ export default function Login() {
      //alert(JSON.stringify(userInfo));
      setLoading(false);
    //  navigation.navigate("AppTab", { screen: "home" });
+
+      ///firebase.auth().signInWithCredential()
 
      navigation.dispatch(StackActions.replace('AppTab'));
      
@@ -61,11 +67,14 @@ export default function Login() {
   }
 
 
-  function  handleLogin() {
+  function  handleLogin()  {
     setLoading(true);
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
+
+    const auth = getAuth();
+
+  
+   setPersistence(auth,browserLocalPersistence);
+   signInWithEmailAndPassword(auth, email, password)
       .then(function () {
         setLoading(false);
         navigation.navigate("AppTab", { screen: "home" });
@@ -87,7 +96,10 @@ export default function Login() {
     
     checkLocalUser();
 
-    const unsubsc= firebase.auth().onAuthStateChanged(async (user)=>{
+    const auth = getAuth();
+
+    const unsubsc=onAuthStateChanged(auth, async (user)=>{
+
          if(user){
              setUserInfo(user);
              await AsyncStorage.setItem("@user",JSON.stringify(user));

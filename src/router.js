@@ -1,4 +1,5 @@
 import React, { useState,useEffect } from "react";
+
 import {
  
   View,
@@ -10,7 +11,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
+import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage";
+import { getAuth,onAuthStateChanged} from "firebase/auth";
 
 import {
    Text
@@ -34,9 +36,9 @@ const Stack = createStackNavigator();
 
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
+  
+  
 }
-
-
 
 
 
@@ -58,10 +60,17 @@ export default function App() {
    
     const userJSON= await AsyncStorage.getItem("@user");
 
+    console.log(userJSON);
     
     if(JSON.parse(userJSON)!=null){
   
     let tempdata=JSON.parse(userJSON);
+
+
+    //let tt=new Date(tempdata.stsTokenManager.expirationTime);
+    //console.log(tt);
+
+
     setUserInfo(tempdata);
 
      setIsLoading(false);
@@ -86,6 +95,30 @@ export default function App() {
   
    },[])
   
+  
+   useEffect( ()=>{
+    
+    const auth = getAuth();
+   
+    const unsubsc=onAuthStateChanged(auth,async (user)=>{
+
+      
+         if(user){
+             setUserInfo(user);
+             await AsyncStorage.setItem("@user",JSON.stringify(user));
+  
+         }
+         else
+         {
+          //
+         }
+  
+     })
+  
+     return ()=>unsubsc();
+  
+   },[])
+
   
   
    function AuthStack() {
