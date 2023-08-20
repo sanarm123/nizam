@@ -16,7 +16,8 @@ import {
   Modal,
   Pressable,
   Animated,
-  Dimensions
+  Dimensions,
+  AppState
 } from "react-native";
 
 import ImageZoom from 'react-native-image-pan-zoom';
@@ -27,7 +28,7 @@ import 'firebase/compat/firestore';
 import { RefreshControl } from "react-native-gesture-handler";
 import { list } from "firebase/storage";
 import {PinchGestureHandler, State } from 'react-native-gesture-handler';
-
+import { useIsFocused } from '@react-navigation/native';
 
 // "add moment(item.timestamp).fromNow()" in code "item.node_id"
 const data = Fire.shared.fakeData;
@@ -53,6 +54,9 @@ const images = [{
 }]
 
 export default function Home() {
+
+ 
+  const currentState = useRef(AppState.currentState);
   const [posts, setPosts] = useState([]);
   const [likeIcon, setLikeIcon] = useState("ios-heart-empty");
   const [likeColor, setLikeColor] = useState("#73788B");
@@ -67,6 +71,22 @@ export default function Home() {
 
   const screen = Dimensions.get('window')
 
+  const isFocused = useIsFocused();
+  const [state, setState] = useState(currentState.current);
+ 
+  useEffect(() => {
+    const handleChange = AppState.addEventListener("change", changedState => {
+
+     // alert(state);
+     fetchDataWithoutSnapShot();
+      currentState.current = changedState;
+      setState(currentState.current);
+    });
+  
+    return () => {
+      handleChange.remove();
+    };
+  }, []);
 
   function ago(time) {
 
@@ -85,9 +105,35 @@ export default function Home() {
 
     let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(3);
 
-    query.get()
-      .then((collections) => {
 
+    query.onSnapshot((snapshot) => {
+
+      const list =posts;
+      let changedDocs = snapshot.docChanges();
+
+     // const poststest=collections.docs
+
+     let count=0;
+      changedDocs.forEach((change) => {
+
+        if (change.type == "added") {
+          count=count+1;
+        }
+
+
+
+     
+      })
+
+      if(count>0){
+       // fetchDataWithoutSnapShot();
+      }
+
+    });
+
+
+      query.get()
+      .then((collections) => {
         collections.forEach((doc) => {
           
           list.push(doc.data());
@@ -111,6 +157,40 @@ export default function Home() {
         console.log(err)
       })
   }
+
+  async function fetchDataWithoutSnapShot() {
+
+   // setIsLoading(true);
+    const list =[];
+
+    let query = firebase.firestore().collection("posts").orderBy("created", "desc").limit(3);
+
+
+      query.get()
+      .then((collections) => {
+        collections.forEach((doc) => {
+          
+          list.push(doc.data());
+         // console.log(doc.data());
+
+        })
+
+
+        //alert(JSON.stringify(list));
+      
+        setPosts(list);
+     //   setIsLoading(false);
+        const lastDoc=collections.docs[collections.docs.length-1];
+        setLastDoc(lastDoc);
+
+       // alert(JSON.stringify(lastDoc));
+
+
+      }).catch((err) => {
+        setIsLoading(false);
+        console.log(err)
+      })
+  }
     
   useEffect( async ()=>{
     
@@ -119,7 +199,7 @@ export default function Home() {
    },[])
 
 
-  async function FetchMore(){
+async function FetchMore(){
    
     const list = posts;
 
@@ -307,7 +387,7 @@ export default function Home() {
           <View style={styles.modal}>
             <View style={styles.modalHeader}>
               <View style={styles.modalHeaderContent}>
-                 <Text>{selectedItem!==null?selectedItem.owner_name:''}</Text></View>
+               </View>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalHeaderCloseText}>X</Text>
               </TouchableOpacity>

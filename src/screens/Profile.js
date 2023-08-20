@@ -107,6 +107,8 @@ const Profile = () => {
     try {
      
 
+      firebase.auth().signOut();
+
       AsyncStorage.removeItem('@user');
 
 

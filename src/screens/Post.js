@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation,useIsFocused } from "@react-navigation/native";
+import { useNavigation,useIsFocused,StackActions } from "@react-navigation/native";
+
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
@@ -72,6 +73,20 @@ export default function Post() {
     );
   }
  
+
+  function RenderImage() {
+
+    if(image!=null){
+      return (
+        <View  style={{width: 100, height: 120}} v>
+                 <Image source={{uri:image}} style={{width: 100, height: 100}} />
+                 <Button  title="Remove" onPress={()=>{setImage(null)}}  ></Button>
+              </View>
+               
+      );
+    }
+    
+  }
 
 
 
@@ -245,7 +260,9 @@ export default function Post() {
         setIsLoading(false);
         setText('');
 
-        Alert.alert("Info", "Successfully uploaded");
+          Alert.alert("Info", "Successfully uploaded");
+
+        //   navigation.dispatch(StackActions.replace('Thankyoupost'));
 
     }).catch((err) => {
         setIsLoading(false);
@@ -262,30 +279,52 @@ export default function Post() {
   return (
     <View style={styles.container}>
         <View style={{flex:1}}>
-            <View style={{flexDirection:"row",justifyContent:'flex-start'}}>
+          <View style={{flexDirection:"row",justifyContent:'flex-start'}}>
+            <Text style={{textAlign:"left",fontSize:16}}>
+            దయచేసి మీ సమస్యలను పోస్ట్ చేయండి,  మేము మీ అభిప్రాయాన్ని విలువైనదిగా పరిగణిస్తాము మరియు దానిని తెలుసుకోవడానికి మరియు మెరుగుపరచడానికి ఒక అవకాశంగా చూస్తాము.
+            </Text>
+          </View> 
+            <View style={{flexDirection:"row",width:'100%', justifyContent:'flex-start'}}>
                 <TextInput
-                placeholder="What's on your mind?"
+                placeholder="దయచేసి ఇక్కడ టైప్ చేయండి"
                 multiline
                 value={text}
                 onChangeText={setText}
                 numberOfLines={5}
-                style={{margin:20,width:"80%",marginTop:-20, height:'auto',justifyContent:'flex-start'}}
+                autoFocus = {false}
+                style={{width:"80%",marginTop:10, height:'auto',width:'100%',justifyContent:'flex-start',textAlignVertical:'top', borderStyle:'dotted',borderWidth:1}}
                 
                 />
 
-             <TouchableOpacity style={styles.avatar} onPress={() => pickImage()}>
-                <Ionicons name="md-camera" size={32} color="black" />
-             </TouchableOpacity>
-            </View>
 
             
-          
-           <Button
+            </View>
+
+            <View style={{flexDirection:"row",justifyContent:'flex-start',marginTop:10,alignItems:'center',width:'100%'}}>
+
+            
+              <View style={{width:'100%',alignItems:'center'}}>
+                <TouchableOpacity style={styles.appButtonContainer} onPress={() => pickImage()}  >
+                    <Text style={{textAlign:'center'}}>Add Photo</Text>
+                </TouchableOpacity>
+              </View>              
+           
+              
+            </View>
+
+          <View style={{borderRadius:20,marginTop:20,height:130}} >
+              <RenderImage></RenderImage>               
+            
+          </View>
+          <View style={{borderRadius:20,marginTop:20}}>
+          <Button
             onPress={PostComment}
-            title="Submit"
+            title="Post"
             disabled={text.length==0}
             accessibilityLabel="Post "
             />
+          </View>
+            
         </View>
 
       
@@ -299,6 +338,15 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop:20,
     justifyContent: "space-between",
+  },
+  appButtonContainer: {
+    elevation: 8,
+    backgroundColor: "#009688",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginLeft:5,
+    marginRight:5
   },
   header: {
     width: "100%",

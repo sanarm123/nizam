@@ -21,6 +21,7 @@ import {
 import AppTab from "./components/tab";
 
 import Thankyou from "./screens/Thankyou";
+import Thankyoupost from "./screens/Thankyoupost";
 
 import Login from "./screens/Login";
 import Loading from "./screens/Loading";
@@ -88,10 +89,10 @@ export default function App() {
   
   useEffect( async ()=>{
       
-    checkLocalUser();
+   // checkLocalUser();
   
   
-     return ()=>checkLocalUser();
+   //  return ()=>checkLocalUser();
   
    },[])
   
@@ -105,12 +106,14 @@ export default function App() {
       
          if(user){
              setUserInfo(user);
+             setIsLoading(false);
              await AsyncStorage.setItem("@user",JSON.stringify(user));
   
          }
          else
          {
-          //
+          // setIsLoading(false);
+          setIsLoading(false);
          }
   
      })
@@ -128,6 +131,7 @@ export default function App() {
       <Stack.Screen name="login" component={Login} />
       <Stack.Screen name="AppTab" component={AppTab} />
       <Stack.Screen name="Thankyou" component={Thankyou} />
+      <Stack.Screen name="Thankyoupost" component={Thankyoupost} />
     </Stack.Navigator>
     );
   }
@@ -139,6 +143,7 @@ export default function App() {
      
       <Stack.Screen name="AppTab" component={AppTab} />
       <Stack.Screen name="Thankyou" component={Thankyou} />
+      <Stack.Screen name="Thankyoupost" component={Thankyoupost} />
     </Stack.Navigator>
     );
   }
