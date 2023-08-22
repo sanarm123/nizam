@@ -7,8 +7,9 @@ import Profile from "../../screens/Profile";
 import Messages from "../../screens/Messages";
 import Post from "../../screens/Post";
 import Notifications from "../../screens/Notifications";
-
+import { colors } from 'react-native-elements';
 import Load from "../Load";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -37,12 +38,12 @@ export default function AppTab() {
         }}
       />
       <Tab.Screen
-        name="People"
+        name="Help"
         component={Messages}
         options={{
           tabBarIcon: ({ color }) => (
            
-            <Ionicons name="md-people-sharp" color={color} size={30} />
+            <Ionicons name="md-help" color={color} size={30} />
           ),
         }}
       />
@@ -61,7 +62,7 @@ export default function AppTab() {
           tabBarIcon: ({ color }) => (
             <Ionicons
               name="ios-add-circle"
-              color={"#E9446A"}
+              color={colors.primary}
               size={48}
               
             />

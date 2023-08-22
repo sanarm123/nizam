@@ -1,9 +1,9 @@
 import React, { useState,useEffect,useCallback } from "react";
-import { useNavigation,useFocusEffect,useIsFocused ,StackActions} from "@react-navigation/native";
+import { useNavigation,StackActions} from "@react-navigation/native";
 import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { FontAwesome5 } from "@expo/vector-icons";
+import { colors } from 'react-native-elements';
 
 import {
   View,
@@ -19,7 +19,9 @@ import {
 } from "react-native";
 
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
-import { getAuth,onAuthStateChanged,setPersistence,signInWithEmailAndPassword,browserLocalPersistence,} from "firebase/auth";
+import { getAuth,onAuthStateChanged,
+  setPersistence,signInWithEmailAndPassword,
+  browserLocalPersistence,} from "firebase/auth";
 
 export default function Login() {
 
@@ -124,16 +126,9 @@ export default function Login() {
         <View style={styles.container}>
           <StatusBar backgroundColor="transparent" barStyle="dark-content" />
 
-          {loading ? (
-              <ActivityIndicator size="small" color="#FFF" />
-            ) : (
-              <FontAwesome5 name="exchange-alt" size={22} color="#FFF" />
-            )}
+         
           <View style={{ width: "100%", height: "auto" }}>
-            <Image
-              source={require("../../assets/authHeader.png")}
-              style={styles.imageHeaer}
-            />
+           
     
             <Image
               source={require("../../assets/loginLogo.png")}
@@ -142,7 +137,7 @@ export default function Login() {
     
             <Text
               style={styles.greeting}
-            >{`Nizam me compalints app`}</Text>
+            >{`నిజాయితీ తో కూడిన సేవ మరియు మీ సంతృప్తి మా కర్తవ్యం`}</Text>
     
             <View style={styles.errorMessage}>
               {error && <Text style={styles.errorText}>{error}</Text>}
@@ -155,6 +150,7 @@ export default function Login() {
                   style={styles.input}
                   autoCapitalize="none"
                   value={email}
+                  placeholder="దయచేసి మీ ఇమెయిల్‌ని టైప్ చేయండి"
                   onChangeText={setEmail}
                 />
               </View>
@@ -166,6 +162,7 @@ export default function Login() {
                   secureTextEntry
                   autoCapitalize="none"
                   value={password}
+                  placeholder="దయచేసి మీ పాస్‌వర్డ్‌ని టైప్ చేయండి"
                   onChangeText={setPassword}
                 />
               </View>
@@ -195,10 +192,8 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
           </View>
-          <Image
-            source={require("../../assets/authHeader.png")}
-            style={styles.imageFooter}
-          />
+         
+          <Text>Sponserd by Dolphineye</Text>
         </View>
       );
    }
@@ -271,7 +266,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 30,
-    backgroundColor: "#E9446A",
+    backgroundColor: colors.primary,
     borderRadius: 4,
     height: 52,
     alignItems: "center",

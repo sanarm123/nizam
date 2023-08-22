@@ -12,7 +12,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
 import { ref,uploadBytesResumable,getStorage,getDownloadURL } from "firebase/storage";
-
+import { colors,Button} from 'react-native-elements';
 
 import Fire from "../components/Fire/index2";
 
@@ -21,7 +21,7 @@ import {
   Text,
   Alert,
   Image,
-  Button,
+
   TextInput,
   StyleSheet,
   SafeAreaView,
@@ -31,6 +31,7 @@ import {
 } from "react-native";
 
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
+
 
 const firebaseConfig = require("../config/firebaseConfig");
 // "add moment(item.timestamp).fromNow()" in code "item.node_id"
@@ -78,10 +79,10 @@ export default function Post() {
 
     if(image!=null){
       return (
-        <View  style={{width: 100, height: 120}} v>
+        <View  style={{width: 100, height: 120,marginLeft:20}} >
                  <Image source={{uri:image}} style={{width: 100, height: 100}} />
-                 <Button  title="Remove" onPress={()=>{setImage(null)}}  ></Button>
-              </View>
+                 <Button  title="Remove"  onPress={()=>{setImage(null)}}  ></Button>
+      </View>
                
       );
     }
@@ -263,6 +264,8 @@ export default function Post() {
           Alert.alert("Info", "Successfully uploaded");
 
         //   navigation.dispatch(StackActions.replace('Thankyoupost'));
+          // navigation.navigate('Home')
+          navigation.navigate('Home')
 
     }).catch((err) => {
         setIsLoading(false);
@@ -279,12 +282,12 @@ export default function Post() {
   return (
     <View style={styles.container}>
         <View style={{flex:1}}>
-          <View style={{flexDirection:"row",justifyContent:'flex-start'}}>
-            <Text style={{textAlign:"left",fontSize:16}}>
+          <View style={{flexDirection:"row",marginLeft:20,marginRight:10}}>
+            <Text style={{textAlign:"left",fontSize:16,marginRight:20}}>
             దయచేసి మీ సమస్యలను పోస్ట్ చేయండి,  మేము మీ అభిప్రాయాన్ని విలువైనదిగా పరిగణిస్తాము మరియు దానిని తెలుసుకోవడానికి మరియు మెరుగుపరచడానికి ఒక అవకాశంగా చూస్తాము.
             </Text>
           </View> 
-            <View style={{flexDirection:"row",width:'100%', justifyContent:'flex-start'}}>
+            <View style={{flexDirection:"row", width:'100%',marginLeft:20,alignItems:'center'}}>
                 <TextInput
                 placeholder="దయచేసి ఇక్కడ టైప్ చేయండి"
                 multiline
@@ -292,7 +295,7 @@ export default function Post() {
                 onChangeText={setText}
                 numberOfLines={5}
                 autoFocus = {false}
-                style={{width:"80%",marginTop:10, height:'auto',width:'100%',justifyContent:'flex-start',textAlignVertical:'top', borderStyle:'dotted',borderWidth:1}}
+                style={{width:"80%",marginTop:10, height:'auto',width:'90%',textAlignVertical:'top', borderStyle:'dotted',borderWidth:1}}
                 
                 />
 
@@ -305,7 +308,7 @@ export default function Post() {
             
               <View style={{width:'100%',alignItems:'center'}}>
                 <TouchableOpacity style={styles.appButtonContainer} onPress={() => pickImage()}  >
-                    <Text style={{textAlign:'center'}}>Add Photo</Text>
+                    <Text style={{textAlign:'center',color:'white'}}>Add Photo</Text>
                 </TouchableOpacity>
               </View>              
            
@@ -316,12 +319,13 @@ export default function Post() {
               <RenderImage></RenderImage>               
             
           </View>
-          <View style={{borderRadius:20,marginTop:20}}>
+          <View style={{borderRadius:20,marginTop:20,width:'100%',alignItems:'center'}}>
           <Button
             onPress={PostComment}
-            title="Post"
+            title="Post Message"
             disabled={text.length==0}
             accessibilityLabel="Post "
+            style={{width:'100%'}}
             />
           </View>
             
@@ -341,8 +345,9 @@ const styles = StyleSheet.create({
   },
   appButtonContainer: {
     elevation: 8,
-    backgroundColor: "#009688",
+    backgroundColor: colors.primary,
     borderRadius: 10,
+    color:colors.white,
     paddingVertical: 10,
     paddingHorizontal: 12,
     marginLeft:5,

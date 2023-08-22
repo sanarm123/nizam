@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { colors } from 'react-native-elements';
 import firebase from "firebase/compat/app";
 import 'firebase/compat/auth'
 import 'firebase/compat/firestore'
@@ -62,29 +62,14 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../../assets/authHeader.png")}
-        style={{
-          position: "absolute",
-          top: -100,
-          right: -150,
-          width: 500,
-          height: 320,
-        }}
-      />
+     
       <View
         style={{
           width: "100%",
           height: "auto",
         }}
       >
-        <TouchableOpacity
-          style={styles.back}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="ios-arrow-round-back" size={32} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={styles.greeting}>{`Register`}</Text>
+               <Text style={styles.greeting}>{`Register`}</Text>
 
         <View style={styles.errorMessage}>
           {error && <Text style={styles.error}>{error}</Text>}
@@ -97,6 +82,7 @@ export default function Register() {
               autoCapitalize="words"
               value={name}
               onChangeText={setName}
+              placeholder="దయచేసి మీ పేరును టైప్ చేయండి"
             />
           </View>
 
@@ -105,6 +91,7 @@ export default function Register() {
             <TextInput
               style={styles.input}
               autoCapitalize="none"
+              placeholder="దయచేసి మీ ఇమెయిల్‌ని టైప్ చేయండి"
               value={email}
               onChangeText={setEmail}
             />
@@ -116,6 +103,7 @@ export default function Register() {
               style={styles.input}
               secureTextEntry
               autoCapitalize="none"
+              placeholder="దయచేసి మీ ఇమెయిల్‌ని టైప్ చేయండి"
               value={password}
               onChangeText={setPassword}
             />
@@ -142,18 +130,7 @@ export default function Register() {
           </Text>
         </TouchableOpacity>
       </View>
-      <Image
-        source={require("../../assets/authHeader.png")}
-        style={{
-          position: "absolute",
-          bottom: -200,
-          right: -50,
-          opacity: 0.4,
-          width: 500,
-          height: 320,
-          zIndex: -5,
-        }}
-      />
+      
     </View>
   );
 }
@@ -200,7 +177,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginHorizontal: 30,
-    backgroundColor: "#E9446A",
+    backgroundColor: colors.primary,
     borderRadius: 4,
     height: 52,
     alignItems: "center",

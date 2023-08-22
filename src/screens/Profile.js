@@ -26,7 +26,6 @@ import { colors } from 'react-native-elements';
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState();
-
   const [avatarUrl, setAvatarUrl] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
@@ -171,7 +170,7 @@ const Profile = () => {
               }}>
               <View
                
-                style={{height: 100, width: 100,backgroundColor:'blue',borderRadius:20}}
+                style={{height: 100, width: 100,backgroundColor:colors.backdrop,borderRadius:20}}
               >
                 <View
                   style={{
@@ -303,7 +302,7 @@ const styles = StyleSheet.create({
   panelButton: {
     padding: 13,
     borderRadius: 10,
-    backgroundColor: '#FF6347',
+    backgroundColor: colors.primary,
     alignItems: 'center',
     marginVertical: 7,
   },
@@ -311,6 +310,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     color: 'white',
+    backgroundColor:colors.primary
   },
   action: {
     flexDirection: 'row',

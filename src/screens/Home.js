@@ -11,50 +11,26 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  LayoutAnimation,
   ActivityIndicator,
   Modal,
-  Pressable,
   Animated,
   Dimensions,
-  AppState
+  AppState,
+  ToastAndroid
 } from "react-native";
 
 import ImageZoom from 'react-native-image-pan-zoom';
-import Fire from "../components/Fire/index2";
 import firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { RefreshControl } from "react-native-gesture-handler";
-import { list } from "firebase/storage";
 import {PinchGestureHandler, State } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
-
-// "add moment(item.timestamp).fromNow()" in code "item.node_id"
-const data = Fire.shared.fakeData;
+import Toast from 'react-native-toast-message';
 
 
-const images = [{
-  // Simplest usage.
-  url: 'https://avatars2.githubusercontent.com/u/7970947?v=3&s=460',
-
-  // width: number
-  // height: number
-  // Optional, if you know the image size, you can set the optimization performance
-
-  // You can pass props to <Image />.
-  props: {
-      // headers: ...
-  }
-}, {
-  url: '',
-  props: {
-     
-  }
-}]
 
 export default function Home() {
-
  
   const currentState = useRef(AppState.currentState);
   const [posts, setPosts] = useState([]);
@@ -64,7 +40,6 @@ export default function Home() {
   const [lastDoc,setLastDoc]=useState();
   const [lastPost,setLastPost]=useState(false);
   const [modalVisible,setModalVisible]=useState(false);
-
   const [selectedItem,setSelectedItem]=useState(null);
 
   const scale=new Animated.Value(1);
@@ -73,8 +48,34 @@ export default function Home() {
 
   const isFocused = useIsFocused();
   const [state, setState] = useState(currentState.current);
+  const [userInfo, setUserInfo] = useState();
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  
+
+  useEffect(async () => {
+   
+    AsyncStorage.getItem("@user").then((response) => {
+        let myData=JSON.parse(response);
+
+        setUserInfo(myData);
+
+        setUserName(myData.displayName);
+        setEmail(myData.email);
+    });
+        
+    
+
+  }, []);
+
  
   useEffect(() => {
+
+    Toast.show('Hi', {
+      duration: 3000,
+    });
+
     const handleChange = AppState.addEventListener("change", changedState => {
 
      // alert(state);
@@ -99,6 +100,8 @@ export default function Home() {
 
 
   async function fetchData() {
+
+    ToastAndroid.show('Request sent successfully!', ToastAndroid.SHORT);
 
     setIsLoading(true);
     const list =[];
@@ -306,7 +309,7 @@ async function FetchMore(){
       <View style={styles.container}>
       <View style={styles.header}>
         <View style={{ width: 35, height: 20 }} />
-        <Text style={styles.textHeader}>Posts</Text>
+        <Text style={styles.textHeader}>Welcome {userName}</Text>
         <TouchableOpacity
           style={{ height: 35, width: 35, borderRadius: 35 / 2 }}
         >
