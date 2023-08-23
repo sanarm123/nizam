@@ -6,46 +6,68 @@ import {
   ImageBackground,
   TextInput,
   StyleSheet,
+  Image
 } from 'react-native';
 
 import {useTheme} from 'react-native-paper';
-
+import {uriToBlob} from './convertUriToBlob';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-
-import BottomSheet from 'reanimated-bottom-sheet';
+import * as ImagePicker from "expo-image-picker";
 import Animated from 'react-native-reanimated';
 import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { CommonActions, useNavigation,StackActions } from "@react-navigation/native";
+import 'firebase/compat/storage';
+import {useNavigation,StackActions } from "@react-navigation/native";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
 import { colors } from 'react-native-elements';
 
 
+
 const Profile = () => {
   const [userInfo, setUserInfo] = useState();
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [infos, setInfos] = useState({});
   const navigation = useNavigation();
 
-  const [image, setImage] = useState('https://api.adorable.io/avatars/80/abott@adorable.png');
+ 
   const {colors} = useTheme();
-
+  const [image, setImage] = useState(null);
  
 
-  const takePhotoFromCamera = () => {
-  
+  async function pickImage() {
+    const resul = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+   
+    if (!resul.cancelled) {
+      setImage(resul.uri);
+    }
   }
 
-  const choosePhotoFromLibrary = () => {
+  function RenderImage() {
+
+    if(image!=null){
+      return (
+       
+                 <Image source={{uri:image}} style={{width: '100%', height:'100%',borderRadius:20}} />
+              
+      );
+    }
     
   }
 
+
+ 
 
   useEffect(async () => {
     console.disableYellowBox = true;
@@ -125,7 +147,7 @@ const Profile = () => {
 
   renderInner = () => (
     <View style={styles.panel}>
-      <View style={{alignItems: 'center'}}>
+      <View style={{alignItems:'flex-start'}}>
         <Text style={styles.panelTitle}>Upload Photo</Text>
         <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
       </View>
@@ -159,7 +181,7 @@ const Profile = () => {
   
       <Animated.View style={{margin: 20}}>
         <View style={{alignItems: 'center'}}>
-          <TouchableOpacity >
+          <TouchableOpacity onPress={() => pickImage()} >
             <View
               style={{
                 height: 100,
@@ -178,21 +200,28 @@ const Profile = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <Icon
+                  <RenderImage></RenderImage>
+                
+                </View>
+             
+              </View>
+            </View>
+            <View style={{marginTop:-5,alignItems:'center'}}>
+            <Icon
                     name="camera"
                     size={35}
                     color="#fff"
                     style={{
-                      opacity: 0.7,
+                    
                       alignItems: 'center',
                       justifyContent: 'center',
                       borderWidth: 1,
                       borderColor: '#fff',
+                      color:colors.backdrop,
                       borderRadius: 10,
+                    
                     }}
                   />
-                </View>
-              </View>
             </View>
           </TouchableOpacity>
           <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>

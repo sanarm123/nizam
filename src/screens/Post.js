@@ -27,7 +27,8 @@ import {
   SafeAreaView,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
+  ToastAndroid
 } from "react-native";
 
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
@@ -82,34 +83,12 @@ export default function Post() {
         <View  style={{width: 100, height: 120,marginLeft:20}} >
                  <Image source={{uri:image}} style={{width: 100, height: 100}} />
                  <Button  title="Remove"  onPress={()=>{setImage(null)}}  ></Button>
-      </View>
-               
+        </View>
       );
     }
     
   }
 
-
-
-  async function handlePost() {
-    const data = {
-      text: text.trim(),
-      localUri: image,
-      likes: 0,
-      comments: [],
-    };
-
-    return Fire.shared
-      .addPost(data)
-      .then(() => {
-        setText("");
-        setImage(null);
-        navigation.goBack();
-      })
-      .catch((err) => {
-        Alert.alert("erro", JSON.stringify(err));
-      });
-  }
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -261,15 +240,13 @@ export default function Post() {
         setIsLoading(false);
         setText('');
 
-          Alert.alert("Info", "Successfully uploaded");
-
-        //   navigation.dispatch(StackActions.replace('Thankyoupost'));
-          // navigation.navigate('Home')
+      
+          ToastAndroid.show('Post has been sent successfully!', ToastAndroid.SHORT);
           navigation.navigate('Home')
 
     }).catch((err) => {
         setIsLoading(false);
-        Alert.alert("Error", "Failed to load");
+        ToastAndroid.show('Post failed to send successfully', ToastAndroid.SHORT);
     });
 
   }

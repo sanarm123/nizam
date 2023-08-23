@@ -58,9 +58,7 @@ export default function Home() {
    
     AsyncStorage.getItem("@user").then((response) => {
         let myData=JSON.parse(response);
-
         setUserInfo(myData);
-
         setUserName(myData.displayName);
         setEmail(myData.email);
     });
@@ -101,7 +99,7 @@ export default function Home() {
 
   async function fetchData() {
 
-    ToastAndroid.show('Request sent successfully!', ToastAndroid.SHORT);
+   
 
     setIsLoading(true);
     const list =[];
@@ -152,12 +150,13 @@ export default function Home() {
         const lastDoc=collections.docs[collections.docs.length-1];
         setLastDoc(lastDoc);
 
-       // alert(JSON.stringify(lastDoc));
+        ToastAndroid.show('Details loaded successfully!', ToastAndroid.SHORT);
 
 
       }).catch((err) => {
         setIsLoading(false);
-        console.log(err)
+        console.log(err);
+        ToastAndroid.show('Error while loading the details', ToastAndroid.SHORT);
       })
   }
 

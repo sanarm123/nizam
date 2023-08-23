@@ -5,85 +5,66 @@ import {
   Image,
   FlatList,
   StyleSheet,
+  Linking,
   TouchableOpacity,
 } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Header from "../components/Header";
+import Tel from './Tel'
 
-const data = [
-  {
-    id: "e21",
-    name: "Julio",
-    last: "Oi",
-    avatar: "https://avatars0.githubusercontent.com/u/1?v=4",
-  },
-  {
-    id: "e22",
-    name: "Alisson",
-    last: "Como ta indo?",
-    avatar: "https://avatars0.githubusercontent.com/u/3?v=4",
-  },
-];
+
 
 export default function Messages({ navigation }) {
-  const [chats, setChats] = useState(data);
+ function onPressTel(number) {
+    Linking.openURL(`tel://${number}`).catch(err => console.log('Error:', err))
+  }
+
+  onPressSms = () => {
+    console.log('sms')
+  }
+
+  onPressEmail = email => {
+    Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>
+      console.log('Error:', err)
+    )
+  }
 
   return (
-    <View style={styles.container}>
-   
+    <View style={{marginLeft:20,marginTop:5}}>
+      <Text style={{fontSize:25}}>Emergency Contacts</Text>
 
-      {true ? (
-        <>
-          <FlatList
-            data={chats}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            style={{ width: "100%", height: "100%" }}
-            renderItem={({ item }) => (
-              <View style={styles.contentChat}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Message", { data: item })}
-                  style={styles.contentChatUser}
-                >
-                  <Image
-                    style={styles.avatarImage}
-                    source={{ uri: item.avatar }}
-                  />
-                  <View style={{ flex: 1, alignItems: "flex-start" }}>
-                    <Text style={styles.name}>{item.name}</Text>
-                    <Text style={{ color: "#777" }}>{item.last}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-     
-        </>
-      ) : (
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Image
-            style={{ width: 200, height: 200 }}
-            source={{
-              uri: "https://img.icons8.com/bubbles/200/000000/myspace.png",
-            }}
-          />
-          <Text style={styles.title}>Sem novas menssagens :(</Text>
-          <Text style={styles.sub}>
-            Adicione novos amigos para bater um papo legal!
+
+      <TouchableOpacity  onPress={() => onPressTel(100)}>
+        <Text style={{fontSize:18,margin:10}}  >
+          Police: 100
           </Text>
-        </View>
-      )}
+      </TouchableOpacity>
+
+      <TouchableOpacity  onPress={() => onPressTel(108)}>
+        <Text style={{fontSize:18,margin:10}}  >
+        Ambulance: 108
+          </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity  onPress={() => onPressTel('040-24745243')}>
+        <Text style={{fontSize:18,margin:10}}  >
+        Blood Bank: 040-24745243
+          </Text>
+      </TouchableOpacity>
+      
+
+       
+
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent:'flex-start',
+    alignItems:'flex-start',
   },
   contentChat: {
     flex: 1,
