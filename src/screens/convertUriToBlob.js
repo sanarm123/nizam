@@ -13,5 +13,4 @@ const uriToBlob = (uri) => {
    
        xhr.send(null)})}
 
-
-       export default uriToBlob;
+export default uriToBlob;

@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
 
 import moment from "moment";
-
+import { colors} from 'react-native-elements';
 import {
   View,
   Text,
@@ -52,6 +52,7 @@ export default function Home() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
+
   
 
   useEffect(async () => {
@@ -421,10 +422,9 @@ const styles = StyleSheet.create({
   },
   header: {
     width: "100%",
-    paddingTop: 34,
-    paddingBottom: 16,
-    backgroundColor: "#FFF",
-    flexDirection: "row",
+    paddingTop: 40,
+    paddingBottom: 10,
+     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -433,6 +433,7 @@ const styles = StyleSheet.create({
     shadowOffset: {
       height: 5,
     },
+    color:'white',
     shadowOpacity: 0.5,
     zIndex: 10,
   },

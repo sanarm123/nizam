@@ -101,7 +101,8 @@ export default function App() {
    
     const unsubsc=onAuthStateChanged(auth,async (user)=>{
 
-      
+      //    console.log(JSON.stringify(user));
+      //  alert(JSON.stringify(user));
          if(user){
              setUserInfo(user);
              setIsLoading(false);

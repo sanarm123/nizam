@@ -6,11 +6,12 @@ import {
   ImageBackground,
   TextInput,
   StyleSheet,
-  Image
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 
 import {useTheme} from 'react-native-paper';
-import {uriToBlob} from './convertUriToBlob';
+import uriToBlob from './convertUriToBlob';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,11 +21,10 @@ import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
+import { ref,uploadBytesResumable,getStorage,getDownloadURL } from "firebase/storage";
 import {useNavigation,StackActions } from "@react-navigation/native";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
 import { colors } from 'react-native-elements';
-
-
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState();
@@ -34,14 +34,20 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [infos, setInfos] = useState({});
   const navigation = useNavigation();
-
+  const [isLoading, setIsLoading] = useState(false);
  
   const {colors} = useTheme();
   const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+  const [progress, setProgress] = useState(0);
+ 
  
 
   async function pickImage() {
-    const resul = await ImagePicker.launchImageLibraryAsync({
+
+    
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
@@ -49,10 +55,88 @@ const Profile = () => {
     });
 
    
-    if (!resul.cancelled) {
-      setImage(resul.uri);
+    if (!result.canceled) {
+
+     
+      const tempImageURL=await uploadImage(result.uri);
+
+      firebase.auth().currentUser.updateProfile({
+           photoURL:tempImageURL
+      }).then(()=>{
+          console.log("Profile Updated")
+      }).catch((err)=>{
+        console.log(err);
+      })
     }
   }
+
+
+  const uploadImage = async (tempimage) => {
+
+   // alert(tempimage);
+
+    if( tempimage == null ) {
+      return null;
+    }
+
+    setIsLoading(true);
+   
+    const uploadUri = tempimage;
+
+   // alert(image);
+
+   const blobFile = await uriToBlob(uploadUri);
+
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    // Add timestamp to File Name
+    const extension = filename.split('.').pop(); 
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    
+
+    setUploading(true);
+    setTransferred(0);
+
+    const storageMain = firebase.storage().ref(`photos/${filename}`);
+    const storageRef = ref(storageMain, `photos/${filename}`);
+
+    //alert('moving');
+
+    const task =uploadBytesResumable(storageRef,blobFile);
+
+    task.on('state_changed', (taskSnapshot) => {
+
+      console.log('taskonchanged');
+
+      const progress =
+          (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        setProgress(progress.toFixed());
+
+    });
+
+    try {
+      await task;
+
+      const url = getDownloadURL(task.snapshot.ref);
+    
+      //alert(url);
+      setUploading(false);
+      setImage(uploadUri);
+      setIsLoading(false); 
+      
+      return url;
+
+    } catch (e) {
+
+      console.log(e);
+      setIsLoading(false);
+      return null;
+    }
+
+  };
 
   function RenderImage() {
 
@@ -74,11 +158,10 @@ const Profile = () => {
     AsyncStorage.getItem("@user").then((response) => {
   
     let myData=JSON.parse(response);
-
- 
-
     setUserName(myData.displayName);
     setEmail(myData.email);
+    setImage(myData.photoURL);
+    
  });
     
    
@@ -106,22 +189,6 @@ const Profile = () => {
   }, [avatarUrl]);
   
 
-  async function refreshAvatar() {
-    if (loading) {
-      return setLoading(false);
-    }
-    setLoading(true);
-
-    setAvatarUrl(getImage());
-    Fire.shared.userData
-      .updateProfile({
-        photoURL: avatarUrl,
-      })
-      .then(() => console.log("atualizado"));
-    test();
-  }
-
-
   function sinoutMe(){
 
    
@@ -142,7 +209,6 @@ const Profile = () => {
      console.log('Done')
 
 }
-
 
 
   renderInner = () => (
@@ -200,6 +266,7 @@ const Profile = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
+                   <ActivityIndicator size="large" animating={isLoading} />
                   <RenderImage></RenderImage>
                 
                 </View>

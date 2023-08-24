@@ -169,12 +169,6 @@ export default function Post() {
 
     const task =uploadBytesResumable(storageRef,blobFile);
 
-   
-    
-  //  alert('moving test');
-
-
-    // Set transferred state
     task.on('state_changed', (taskSnapshot) => {
 
       console.log('taskonchanged');
