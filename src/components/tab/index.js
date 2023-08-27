@@ -1,15 +1,16 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons,AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import Home from "../../screens/Home";
 import Profile from "../../screens/Profile";
 import Messages from "../../screens/Messages";
 import Post from "../../screens/Post";
 import Notifications from "../../screens/Notifications";
-import { colors } from 'react-native-elements';
-import Load from "../Load";
-
+import { colors} from 'react-native-elements';
+import Load from "../Load"; 
+import { View,TouchableOpacity,Text} from "react-native";
+import { Button } from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 
@@ -81,10 +82,17 @@ export default function AppTab() {
       <Tab.Screen
         name="Profile"
         component={Profile}
+        
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name="ios-person" color={color} size={26} />
           ),
+          headerRight: () => (
+            <View >
+           
+            </View>
+          ),
+          
         }}
       />
     </Tab.Navigator>

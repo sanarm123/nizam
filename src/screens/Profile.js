@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect,createRef,useRef} from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-
 import {useTheme} from 'react-native-paper';
 import uriToBlob from './convertUriToBlob';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,7 +23,8 @@ import 'firebase/compat/storage';
 import { ref,uploadBytesResumable,getStorage,getDownloadURL } from "firebase/storage";
 import {useNavigation,StackActions } from "@react-navigation/native";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
-import { colors } from 'react-native-elements';
+import { colors,Button,Input } from 'react-native-elements';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState();
@@ -42,8 +42,11 @@ const Profile = () => {
   const [transferred, setTransferred] = useState(0);
   const [progress, setProgress] = useState(0);
  
- 
-
+  
+  const input = createRef();
+  
+  
+  
   async function pickImage() {
 
     
@@ -245,102 +248,146 @@ const Profile = () => {
     <View style={styles.container}>
 
   
-      <Animated.View style={{margin: 20}}>
-        <View style={{alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => pickImage()} >
+    <Animated.View style={{margin: 20}}>
+      <View style={{alignItems: 'center'}}>
+        <TouchableOpacity onPress={() => pickImage()} >
+          <View
+            style={{
+              height: 100,
+              width: 100,
+              borderRadius: 15,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <View
-              style={{
-                height: 100,
-                width: 100,
-                borderRadius: 15,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-               
-                style={{height: 100, width: 100,backgroundColor:colors.backdrop,borderRadius:20}}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                   <ActivityIndicator size="large" animating={isLoading} />
-                  <RenderImage></RenderImage>
-                
-                </View>
              
+              style={{height: 100, width: 100,backgroundColor:colors.backdrop,borderRadius:20}}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                 <ActivityIndicator size="large" animating={isLoading} />
+                <RenderImage></RenderImage>
+              
               </View>
+           
             </View>
-            <View style={{marginTop:-5,alignItems:'center'}}>
-            <Icon
-                    name="camera"
-                    size={35}
-                    color="#fff"
-                    style={{
-                    
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderWidth: 1,
-                      borderColor: '#fff',
-                      color:colors.backdrop,
-                      borderRadius: 10,
-                    
-                    }}
-                  />
-            </View>
-          </TouchableOpacity>
-          <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
-            {userName}
-          </Text>
-        </View>
-
-   
-       
-        <View style={styles.action}>
-          <Feather name="phone" color={colors.text} size={20} />
-          <Text
-            placeholder="Phone"
-            placeholderTextColor="#666666"
-            keyboardType="number-pad"
-            autoCorrect={false}
-            style={[
-              styles.textInput,
-              {
-                color: colors.text,
-              },
-            ]}
-          />
-        </View>
-        <View style={styles.action}>
-          <FontAwesome name="envelope-o" color={colors.text} size={20} />
-          <Text
-            placeholder="Email"
-            placeholderTextColor="#666666"
-            keyboardType="email-address"
-            autoCorrect={false}
-            style={[
-              styles.textInput,
-              {
-                color: colors.text,
-                textAlign:'center',
-                verticalAlign:'middle'
-              },
-            ]}
-          >{email}</Text>
-        </View>
-     
-        
-        <TouchableOpacity style={styles.commandButton} onPress={() => sinoutMe()}>
-          <Text style={styles.panelButtonTitle}>Logout</Text>
+          </View>
+          <View style={{marginTop:-5,alignItems:'center'}}>
+          <Icon
+                  name="camera"
+                  size={35}
+                  color="#fff"
+                  style={{
+                  
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: 1,
+                    borderColor: '#fff',
+                    color:colors.backdrop,
+                    borderRadius: 10,
+                  
+                  }}
+                />
+          </View>
         </TouchableOpacity>
-      </Animated.View>
+        <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
+          {email}
+        </Text>
+      </View>
+
+
+      <View style={styles.action}>
+        <FontAwesome name="user-o" color={colors.text} size={20} />
+        <Text
+          placeholder="Email"
+          placeholderTextColor="#666666"
+          keyboardType="email-address"
+          autoCorrect={false}
+          style={[
+            styles.textInput,
+            {
+              color: colors.text,
+              textAlign:'left',
+              marginTop:1,
+              verticalAlign:'middle',
+            },
+          ]}
+        >{userName}</Text>
+       <FontAwesome name="edit" color={colors.text} size={20} onPress={() => this.RBSheet.open()} />
+      </View>
+    
+     
+     
+      <View style={styles.action}>
+        <Feather name="phone" color={colors.text} size={20} />
+        <Text
+          placeholder="Phone"
+          placeholderTextColor="#666666"
+          keyboardType="number-pad"
+          autoCorrect={false}
+          style={[
+            styles.textInput,
+            {
+              color: colors.text,
+            },
+          ]}
+
+        />
+          <FontAwesome name="edit" color={colors.text} size={20} onPress={() => this.RBSheet.open()} />
+      </View>
+      
+    
+      
+      <TouchableOpacity style={styles.commandButton} onPress={() => sinoutMe()}>
+        <Text style={styles.panelButtonTitle}>Logout</Text>
+      </TouchableOpacity>
+    </Animated.View>
+ 
+
+      <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          height={200}
+          openDuration={250}
+          customStyles={{
+            container: {
+              justifyContent: "center",
+              alignItems: "center",
+            
+            }
+          }}
+        >
+
+          <View style={{width:'100%'}}>
+          <Input
+              leftIcon={{ type: 'font-awesome', name: 'user-o' }}
+              placeholder='INPUT WITH ERROR MESSAGE'
+              isFocused={true}
+              ref={input}
+              errorStyle={{ color: 'red' }}
+              errorMessage=''
+              value={userName}
+              autoFocus={true}
+              inputStyle={{width:'80%'}}
+              onChangeText={(value) =>setUserName(value)}
+            />
+          </View>
+         
+    </RBSheet>
     </View>
+    
   );
 };
 
 export default Profile;
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -415,6 +462,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
+    verticalAlign:'middle'
   },
   actionError: {
     flexDirection: 'row',
