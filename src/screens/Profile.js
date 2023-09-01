@@ -13,6 +13,7 @@ import {useTheme} from 'react-native-paper';
 import uriToBlob from './convertUriToBlob';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MDIcon from "react-native-vector-icons/MaterialIcons";
 import Feather from 'react-native-vector-icons/Feather';
 import * as ImagePicker from "expo-image-picker";
 import Animated from 'react-native-reanimated';
@@ -71,6 +72,16 @@ const Profile = () => {
         console.log(err);
       })
     }
+  }
+
+  async function SaveUserName(){
+    firebase.auth().currentUser.updateProfile({
+      displayName:userName
+      }).then(()=>{
+          console.log("Profile Updated"+userName)
+      }).catch((err)=>{
+        console.log(err);
+      })
   }
 
 
@@ -376,6 +387,26 @@ const Profile = () => {
               inputStyle={{width:'80%'}}
               onChangeText={(value) =>setUserName(value)}
             />
+          </View>
+
+          <View style={{ flexDirection: 'row'}}>
+         
+
+              <Button
+                title="Cancel"
+                type="outline"
+                onPress={() => this.RBSheet.close()}
+                style={{marginLeft:50,  padding: 30}}
+              />
+
+              <View style={{width:20}}></View>
+
+            <Button
+                title="Save"
+                type="outline"
+                style={{marginRight:10,  padding: 30}}
+                onPress={() => {SaveUserName();this.RBSheet.close() }}
+              />
           </View>
          
     </RBSheet>
