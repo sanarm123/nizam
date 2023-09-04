@@ -26,6 +26,7 @@ import Thankyoupost from "./screens/Thankyoupost";
 import Login from "./screens/Login";
 import Loading from "./screens/Loading";
 import RegisterScreen from "./screens/Register";
+import PhoneAuthScreen from "./screens/PhoneAuth";
 
 
 
@@ -127,6 +128,7 @@ export default function App() {
     return (
       <Stack.Navigator headerMode="none" initialRouteName="login">
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <Stack.Screen name="PhoneAuthScreen" component={PhoneAuthScreen} />
       <Stack.Screen name="login" component={Login} />
       <Stack.Screen name="AppTab" component={AppTab} />
       <Stack.Screen name="Thankyou" component={Thankyou} />

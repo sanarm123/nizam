@@ -1,16 +1,22 @@
 
-
-import { getStorage } from "firebase/storage";
-import { getAuth } from "firebase/auth";
 import firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-const firebaseConfig = require("./config/firebaseConfig");
+export const firebaseConfig2 = {
+    apiKey: "AIzaSyDX89F7g298GO4Min2FHOmH1HFaBvm98YA",
+    authDomain: "myworld-d76d2.firebaseapp.com",
+    projectId: "myworld-d76d2",
+    storageBucket: "myworld-d76d2.appspot.com",
+    messagingSenderId: "402597814020",
+    appId: "1:402597814020:web:cce617b9bf72d052b33a51"
+}
 
-export const firebaseContext =firebase.initializeApp(firebaseConfig);
-export const storage = getStorage(firebase);
-export const fireauth=getAuth(firebase);
+if(!firebase.apps.length){
+    firebase.initializeApp(firebaseConfig2);
+}
+
+
 
 
 

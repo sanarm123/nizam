@@ -191,6 +191,18 @@ export default function Login() {
                 </Text>
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }}>
+              <Text style={{ color: "#414959", fontSize: 18 }} onPress={() => navigation.navigate('PhoneAuthScreen')}>
+                Sing up With Phone?{" "}
+                <Text
+                  
+                  style={{ fontWeight: "500", color: "#E9446A" }}
+                >
+                  Go
+                </Text>
+              </Text>
+            </TouchableOpacity>
           </View>
          
           <Text>Sponserd by Dolphineye</Text>
