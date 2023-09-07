@@ -49,6 +49,7 @@ export default function Login() {
  
   React.useEffect(() => {
     if (response?.type === "success") {
+      const auth = getAuth();
       const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential);
