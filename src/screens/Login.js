@@ -4,6 +4,10 @@ import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { colors } from 'react-native-elements';
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 import {
   View,
@@ -21,7 +25,10 @@ import {
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
 import { getAuth,onAuthStateChanged,
   setPersistence,signInWithEmailAndPassword,
-  browserLocalPersistence,} from "firebase/auth";
+  browserLocalPersistence,GoogleAuthProvider,signInWithCredential } from "firebase/auth";
+
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
 
@@ -35,7 +42,18 @@ export default function Login() {
 
   const navigation = useNavigation();
 
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+     androidClientId: "402597814020-di3t5qd59sh1f760pfqm1m8m8u5hop0p.apps.googleusercontent.com",
+  });
  
+  React.useEffect(() => {
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential);
+    }
+  }, [response]);
  
   const checkLocalUser=async()=>{
    
@@ -132,7 +150,7 @@ export default function Login() {
     
             <Image
               source={require("../../assets/loginLogo.png")}
-              style={{ alignSelf: "center", marginTop: 44 }}
+              style={{ alignSelf: "center", marginTop: 10 }}
             />
     
             <Text
@@ -180,7 +198,7 @@ export default function Login() {
               )}
             </TouchableOpacity>
     
-            <TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }}>
+            <TouchableOpacity style={{ alignSelf: "center", marginTop: 10 }}>
               <Text style={{ color: "#414959", fontSize: 18 }} onPress={() => navigation.navigate('RegisterScreen')}>
                 Sing up?{" "}
                 <Text
@@ -192,17 +210,31 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{ alignSelf: "center", marginTop: 32 }}>
-              <Text style={{ color: "#414959", fontSize: 18 }} onPress={() => navigation.navigate('PhoneAuthScreen')}>
-                Sing up With Phone?{" "}
-                <Text
-                  
-                  style={{ fontWeight: "500", color: "#E9446A" }}
-                >
-                  Go
-                </Text>
-              </Text>
-            </TouchableOpacity>
+        
+        <View style={{alignItems:"center"}}>
+
+        <TouchableOpacity
+        
+        onPress={() => promptAsync()}
+      >
+
+   
+
+<Text style={{ fontSize: 32, fontWeight: "bold",marginTop:20 }}>
+        Sign In with{" "}
+        <Text style={{ color: "#4285F4" }}>
+          G<Text style={{ color: "#EA4336" }}>o</Text>
+          <Text style={{ color: "#FBBC04" }}>o</Text>
+          <Text style={{ color: "#4285F4" }}>g</Text>
+          <Text style={{ color: "#34A853" }}>l</Text>
+          <Text style={{ color: "#EA4336" }}>e</Text>
+        </Text>
+      </Text>
+      </TouchableOpacity>
+    
+        </View>
+      
+   
           </View>
          
           <Text>Sponserd by Dolphineye</Text>
