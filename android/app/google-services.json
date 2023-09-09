@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "402597814020",
+    "project_id": "myworld-d76d2",
+    "storage_bucket": "myworld-d76d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402597814020:android:bd32ed467980f92cb33a51",
+        "android_client_info": {
+          "package_name": "com.sanarmoor.nizam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402597814020-di3t5qd59sh1f760pfqm1m8m8u5hop0p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sanarmoor.nizam",
+            "certificate_hash": "cb841c47c63a8867d1a0743c77f66b044ffa4096"
+          }
+        },
+        {
+          "client_id": "402597814020-shte1i07b2m77pmat6of65748h9qhgbi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvIbk0ySFeRUirTl9K5gaIJQJSK1xJBkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402597814020-4un8vmcus6u7b2u08qlt5cc2l6ih4l6o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

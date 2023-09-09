@@ -22,7 +22,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sanarmoor.nizam"
+      "package": "com.sanarmoor.nizam",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +33,15 @@
         "projectId": "99aeacb8-9fd2-4bd6-b9d1-b7df2bc701ee"
       }
     },
-    "scheme":"nizam"
+    "scheme":"nizam",
+    "plugins":[
+      [
+        "expo-notifications",
+        {
+          "icon":"./assets/icon.png",
+          "color":"#ffffff"
+        }
+      ]
+    ]
   }
 }

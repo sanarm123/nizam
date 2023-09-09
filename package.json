@@ -19,6 +19,7 @@
     "expo-auth-session": "~5.0.2",
     "expo-crypto": "~12.4.1",
     "expo-image-picker": "~14.3.2",
+    "expo-notifications": "~0.20.1",
     "expo-permissions": "~14.2.1",
     "expo-random": "~13.2.0",
     "expo-splash-screen": "~0.20.5",
