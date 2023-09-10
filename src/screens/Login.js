@@ -6,8 +6,7 @@ import 'firebase/compat/firestore';
 import { colors } from 'react-native-elements';
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import { Ionicons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+
 
 import {
   View,
@@ -52,7 +51,21 @@ export default function Login() {
       const auth = getAuth();
       const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(auth, credential);
+
+      setLoading(true);
+      signInWithCredential(auth, credential)
+      .then(function () {
+
+       /// alert('success');
+        setLoading(false);
+       
+      })
+      .catch((err) => {
+        alert(err.message);
+
+        setLoading(false);
+        setError(err.message);
+      });
     }
   }, [response]);
  
@@ -123,12 +136,7 @@ export default function Login() {
 
          if(user){
              setUserInfo(user);
-             await AsyncStorage.setItem("@user",JSON.stringify(user));
-  
-         }
-         else
-         {
-          //
+             AsyncStorage.setItem("@user",JSON.stringify(user));
          }
   
      })

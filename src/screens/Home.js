@@ -55,13 +55,16 @@ export default function Home() {
 
   
 
-  useEffect(async () => {
+  useEffect( () => {
    
-    AsyncStorage.getItem("@user").then((response) => {
+    setTimeout(function(){
+      AsyncStorage.getItem("@user").then((response) => {
         let myData=JSON.parse(response);
         setUserInfo(myData);
         setUserName(myData.displayName);
         setEmail(myData.email);
+    },1000);
+    
     });
         
     
