@@ -14,7 +14,7 @@ import 'firebase/compat/firestore';
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage";
 import { getAuth,onAuthStateChanged} from "firebase/auth";
 
-import * as PushNotifications from 'expo-notifications';
+
 
 
 
@@ -30,18 +30,6 @@ import Thankyoupost from "./screens/Thankyoupost";
 import Login from "./screens/Login";
 import Loading from "./screens/Loading";
 import RegisterScreen from "./screens/Register";
-
-
-
-PushNotifications.setNotificationHandler({
-  handleNotification: async ()=>{
-      return   {
-          shouldPlaySound:true,
-          shouldSetBadge:false,
-          shouldShowAlert:true
-      }
-  }
-});
 
 
 const firebaseConfig = require("./config/firebaseConfig");
@@ -127,70 +115,6 @@ export default function App() {
    },[])
 
   
-   useEffect(()=>{
-
-   
-    async function configurePushNotification(){
-
-     const {status}= await  PushNotifications.getPermissionsAsync();
-
-     let finalStatus=status;
-
-     console.log("Push Notification Status:"+finalStatus);
-
-     if(finalStatus!=='granted'){
-        const {status}= await  PushNotifications.requestPermissionsAsync();
-        finalStatus=status;
-
-        if(finalStatus!=='granted'){
-            Alert.alert('Permisions Required','Push notifications need the appropriate permissions.')
-        }
-
-        return;
-
-     }
-
-     const pushTokenData=  await PushNotifications.getExpoPushTokenAsync({
-      projectId: '99aeacb8-9fd2-4bd6-b9d1-b7df2bc701ee',
-     });
-
-   
-     console.log("Push Notification");
-
-     console.log(pushTokenData);
-
-     if(Platform.OS==='android'){
-      await PushNotifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: PushNotifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C',
-      });
-     }
-
-
-    }
-
-   configurePushNotification();
-
-
-  },[]);
-
-
-
-  useEffect(()=>{
-
-    const subscription1= PushNotifications.addNotificationReceivedListener((notificationobj)=>{
-      console.log('Notification Received');
-    });
-
-    
-
-    return () => {
-      subscription1.remove();
-    }
-
-  },[])
   
    function AuthStack() {
     return (

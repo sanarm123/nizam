@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useCallback } from "react";
+import React, { useState,useEffect,useCallback,useRef} from "react";
 import { useNavigation,StackActions} from "@react-navigation/native";
 import  firebase from "firebase/compat/app";
 import 'firebase/compat/auth';
@@ -6,7 +6,7 @@ import 'firebase/compat/firestore';
 import { colors } from 'react-native-elements';
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-
+import * as Notifications from 'expo-notifications';
 
 import {
   View,
@@ -18,7 +18,7 @@ import {
   LayoutAnimation,
   TouchableOpacity,
   ActivityIndicator,
- 
+  Button
 } from "react-native";
 
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
@@ -29,10 +29,92 @@ import { getAuth,onAuthStateChanged,
 
 WebBrowser.maybeCompleteAuthSession();
 
+Notifications.setNotificationHandler({
+  handleNotification: async ()=>{
+      return   {
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }
+  }
+});
+
+
+
+
+
+const notificationResponseListener = Notifications.addNotificationResponseReceivedListener((response)=>{
+  console.log("hi received");
+})
 export default function Login() {
 
+  
+
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  
+  const lastNotificationResponse = Notifications.useLastNotificationResponse()
+  useEffect(() => {
+    
+    if (
+
+      lastNotificationResponse &&
+      lastNotificationResponse.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      console.log(lastNotificationResponse.notification.request.content)
+    }
+  }, [lastNotificationResponse])
 
 
+ 
+  useEffect(()=>{
+
+   
+    async function configurePushNotification(){
+
+     const {status}= await  Notifications.getPermissionsAsync();
+
+     let finalStatus=status;
+
+     console.log("Push Notification Status:"+finalStatus);
+
+     if(finalStatus!=='granted'){
+        const {status}= await  Notifications.requestPermissionsAsync();
+        finalStatus=status;
+
+        if(finalStatus!=='granted'){
+            Alert.alert('Permisions Required','Push notifications need the appropriate permissions.')
+        }
+
+        return;
+
+     }
+
+     const pushTokenData=  await Notifications.getExpoPushTokenAsync({
+      projectId: '99aeacb8-9fd2-4bd6-b9d1-b7df2bc701ee',
+     });
+
+   
+     console.log("Push Notification");
+
+     console.log(pushTokenData);
+
+     if(Platform.OS==='android'){
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX
+      });
+     }
+
+
+    }
+
+   configurePushNotification();
+
+
+  },[]);
+
+  
   const [userInfo, setUserInfo] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -245,6 +327,25 @@ export default function Login() {
       
    
           </View>
+
+          <Button
+            onPress={ ()=>{
+               // alert("");
+               Notifications.scheduleNotificationAsync({
+                content:{
+                  title:'Email',
+                  body:'This is the body of the notification. second',
+                  data:{userName:'Max'}
+              },
+              trigger:{
+                seconds:2,
+                channelId: 'default',
+              }
+            });
+
+            
+            }}
+            title="Schedule Notification"  />
          
           <Text>Sponserd by Dolphineye</Text>
         </View>

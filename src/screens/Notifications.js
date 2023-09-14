@@ -3,7 +3,6 @@ import { View, Text,Dimensions, Image, StyleSheet,Button} from "react-native";
 import ImageZoom from 'react-native-image-pan-zoom';
 
 export default function Notifications() {
-  
 
   return (
     <View style={styles.container}>
