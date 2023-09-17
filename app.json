@@ -33,14 +33,25 @@
         "projectId": "99aeacb8-9fd2-4bd6-b9d1-b7df2bc701ee"
       }
     },
-    "scheme":"nizam",
-    "plugins":[
+    "scheme": "nizam",
+    "plugins": [
       [
         "expo-notifications",
         {
-          "icon":"./assets/icon.png"
+          "icon": "./assets/icon.png"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "buildToolsVersion": "34.0.0"
+          }
         }
       ]
+
     ]
   }
 }
