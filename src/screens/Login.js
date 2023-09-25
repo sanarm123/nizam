@@ -126,6 +126,7 @@ export default function Login() {
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
      androidClientId: "402597814020-di3t5qd59sh1f760pfqm1m8m8u5hop0p.apps.googleusercontent.com",
+     iosClientId:"402597814020-pismu01phaac1eakoqvpo5ovir16s3uj.apps.googleusercontent.com"
   });
  
   React.useEffect(() => {

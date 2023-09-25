@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sanarmoor.nizam"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,18 +41,7 @@
         {
           "icon": "./assets/icon.png"
         }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34,
-            "buildToolsVersion": "34.0.0"
-          }
-        }
       ]
-
     ]
   }
 }

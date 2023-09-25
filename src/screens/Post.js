@@ -252,13 +252,21 @@ export default function Post() {
 
   return (
     <View style={styles.container}>
+           <Button
+                    onPress={PostComment}
+                    title="Post Message"
+                    disabled={text.length==0}
+                    accessibilityLabel="Post "
+                    style={{width:'100%',marginRight:30}}
+                    />
         <View style={{flex:1}}>
           <View style={{flexDirection:"row",marginLeft:20,marginRight:10}}>
             <Text style={{textAlign:"left",fontSize:16,marginRight:20}}>
-            దయచేసి మీ సమస్యలను పోస్ట్ చేయండి,  మేము మీ అభిప్రాయాన్ని విలువైనదిగా పరిగణిస్తాము మరియు దానిని తెలుసుకోవడానికి మరియు మెరుగుపరచడానికి ఒక అవకాశంగా చూస్తాము.
+            దయచేసి మీ సమస్యలను పోస్ట్ చేయండి,  మేము మీ అభిప్రాయాన్ని విలువైనదిగా పరిగణిస్తాము.
             </Text>
+         
           </View> 
-            <View style={{flexDirection:"row", width:'100%',marginLeft:20,alignItems:'center'}}>
+            <View style={{flexDirection:"row", width:'100%',height:'40%', marginLeft:20,marginTop:-50,alignItems:'center'}}>
                 <TextInput
                 placeholder="దయచేసి ఇక్కడ టైప్ చేయండి"
                 multiline
@@ -266,7 +274,7 @@ export default function Post() {
                 onChangeText={setText}
                 numberOfLines={5}
                 autoFocus = {false}
-                style={{width:"80%",marginTop:10, height:'auto',width:'90%',textAlignVertical:'top', borderStyle:'dotted',borderWidth:1}}
+                style={{width:"80%", height:'50%',width:'90%',textAlignVertical:'top', borderStyle:'dotted',borderWidth:1}}
                 
                 />
 
@@ -274,12 +282,13 @@ export default function Post() {
             
             </View>
 
-            <View style={{flexDirection:"row",justifyContent:'flex-start',marginTop:10,alignItems:'center',width:'100%'}}>
+            <View style={{flexDirection:"row",justifyContent:'flex-start',alignItems:'center',width:'100%'}}>
 
             
-              <View style={{width:'100%',alignItems:'center'}}>
+              <View style={{width:'100%',alignItems:'center',marginTop:-40}}>
                 <TouchableOpacity style={styles.appButtonContainer} onPress={() => pickImage()}  >
                     <Text style={{textAlign:'center',color:'white'}}>Add Photo</Text>
+                    
                 </TouchableOpacity>
               </View>              
            
@@ -291,13 +300,7 @@ export default function Post() {
             
           </View>
           <View style={{borderRadius:20,marginTop:20,width:'100%',alignItems:'center'}}>
-          <Button
-            onPress={PostComment}
-            title="Post Message"
-            disabled={text.length==0}
-            accessibilityLabel="Post "
-            style={{width:'100%'}}
-            />
+        
           </View>
             
         </View>

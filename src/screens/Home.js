@@ -395,7 +395,7 @@ async function FetchMore(){
               <View style={styles.modalHeaderContent}>
                </View>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Text style={styles.modalHeaderCloseText}>X</Text>
+                <Text style={styles.modalHeaderCloseText}>close</Text>
               </TouchableOpacity>
             </View>
             <View style={{marginLeft:-15}} >
@@ -491,6 +491,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     flex: 1,
+    marginTop:20,
     margin: 10,
     padding: 5,
     backgroundColor: "white",
@@ -509,10 +510,12 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     flexDirection: "row",
+    marginTop:20
   },
   /* The header takes up all the vertical space not used by the close button. */
   modalHeaderContent: {
     flexGrow: 1,
+    marginTop:50
   },
   modalHeaderCloseText: {
     textAlign: "center",

@@ -71,7 +71,7 @@ export default function AppTab() {
         }}
       />
       <Tab.Screen
-        name="Notifications"
+        name="News"
         component={Notifications}
         options={{
           tabBarIcon: ({ color }) => (
