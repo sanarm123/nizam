@@ -44,6 +44,7 @@
     "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-paper": "^5.10.1",
+    "react-native-phone-hint": "^0.2.1",
     "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-reanimated": "~3.3.0",
     "react-native-reanimated-zoom": "^0.3.3",

@@ -1,17 +1,19 @@
 import React, { useEffect,useState } from "react";
-import { View, Text,Dimensions,ActivityIndicator, Image, StyleSheet,Button,FlatList,Platform,TouchableHighlight,Linking} from "react-native";
+import { View,Modal, Text,Dimensions,ActivityIndicator, Image, StyleSheet,Button,FlatList,Platform,TouchableHighlight,TouchableOpacity} from "react-native";
 import ImageZoom from 'react-native-image-pan-zoom';
 import * as rssParser from 'react-native-rss-parser';
 import { WebView } from 'react-native-webview';
 import {useNavigation,StackActions } from "@react-navigation/native";
 import { RefreshControl } from "react-native-gesture-handler";
 import RBSheet from "react-native-raw-bottom-sheet";
+import NewModal from "./NewModal";
 
 export default function Notifications() {
   const [posts, setPosts] = useState([]);
   const [tempURL, setTempURL] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+  const [open, setOpen] = useState(false)
 
   function GetNewsDetails(){
 
@@ -44,10 +46,11 @@ export default function Notifications() {
 
 
   function ItemDetails(item){
+    
     console.log(item.links[0].url);
     setTempURL(item.links[0].url);
     
-    this.RBSheet.open();
+  //  this.RBSheet.open();
   }
 
   useEffect(()=>{
@@ -81,16 +84,55 @@ export default function Notifications() {
   renderItem={({item, index, separators}) => (
     <TouchableHighlight
       key={item.key}
-      onPress={() => ItemDetails(item)}
+  
       onShowUnderlay={separators.highlight}
       onHideUnderlay={separators.unhighlight}>
       <View style={styles.feedItem}>
-        <Text>{item.title}</Text>
+     
+        <TouchableOpacity onPress={() =>{  console.log(item.links[0].url);
+    setTempURL(item.links[0].url);
+    setOpen(true);}}>
+             <Text>{item.title}</Text>
+        </TouchableOpacity>
       </View>
+
+      
     </TouchableHighlight>
   )}
 />
 
+
+
+<Modal
+        visible={open}
+        animationType="fade"
+          transparent={true}
+        onRequestClose={() => setOpen(false)}>
+          <View style={styles.modal}>
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderContent}>
+               </View>
+              <TouchableOpacity onPress={() => setOpen(false)}>
+
+                <Text style={styles.modalHeaderCloseText}>CLOSE</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flex:1, flexDirection: 'col',width:'100%'}} >
+           
+                  <WebView
+                    originWhitelist={['*']}
+                    source={{uri: tempURL}}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    allowsInlineMediaPlayback={true}
+                    allowsFullscreenVideo={ false }
+                    renderLoading={this.IndicatorLoadingView}
+                    startInLoadingState={true}
+                    onLoad={() =>setIsLoading(false)}
+                  />
+            </View>
+          </View>
+    </Modal>
     <RBSheet
           ref={ref => {
             this.RBSheet = ref;
@@ -116,23 +158,16 @@ export default function Notifications() {
                 style={{marginLeft:50,  padding: 30}}
               />
 
-                <WebView
-              originWhitelist={['*']}
-              source={{uri: tempURL}}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              allowsInlineMediaPlayback={true}
-              allowsFullscreenVideo={ false }
-              renderLoading={this.IndicatorLoadingView}
-              startInLoadingState={true}
-              onLoad={() =>setIsLoading(false)}
-            />
+               
 
              
            
           </View>
          
     </RBSheet>
+
+
+   
 
     </View>
   );
@@ -162,6 +197,35 @@ const styles = StyleSheet.create({
   sub: {
     fontWeight: "400",
     color: "#37373750",
+  },
+  modal: {
+    flex: 1,
+    marginTop:20,
+    margin: 10,
+    padding: 5,
+    backgroundColor: "white",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  /* The content of the modal takes all the vertical space not used by the header. */
+  modalContent: {
+    flex: 1
+  },
+  modalHeaderCloseText: {
+    textAlign: "center",
+    fontSize:20,
+    paddingLeft: 5,
+    paddingRight: 5
+  },
+  modalHeaderContent: {
+    flexGrow: 1,
+    marginTop:50
   },
   IndicatorStyle: {
     position: "absolute",

@@ -10,7 +10,7 @@ import { useEffect,useRef } from 'react';
 
 export default function App() {
 
-  registerNNPushToken(12183, 'Dl5jHPEE4JqTdgV3KjTMOh');
+ // registerNNPushToken(12183, 'Dl5jHPEE4JqTdgV3KjTMOh');
   
   return (
     <>

@@ -1,7 +1,7 @@
 import React, { useState,useEffect, Fragment, useRef } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage,{useAsyncStorage} from "@react-native-async-storage/async-storage"; 
-
+import { initPhoneNumberHint } from 'react-native-phone-hint';
 import moment from "moment";
 import { colors} from 'react-native-elements';
 import {
@@ -29,9 +29,8 @@ import { useIsFocused } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
 
-
 export default function Home() {
- 
+  
   const currentState = useRef(AppState.currentState);
   const [posts, setPosts] = useState([]);
   const [likeIcon, setLikeIcon] = useState("ios-heart-empty");
@@ -411,7 +410,7 @@ async function FetchMore(){
              
             </View>
           </View>
-      </Modal>
+    </Modal>
 
     </Fragment>
     
