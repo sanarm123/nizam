@@ -75,7 +75,7 @@ export default function AppTab() {
         component={Notifications}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-notifications" color={color} size={26} />
+            <Ionicons name="md-newspaper" color={color} size={26} />
           ),
         }}
       />

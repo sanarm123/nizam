@@ -7,6 +7,7 @@ import {useNavigation,StackActions } from "@react-navigation/native";
 import { RefreshControl } from "react-native-gesture-handler";
 import RBSheet from "react-native-raw-bottom-sheet";
 import NewModal from "./NewModal";
+import { AntDesign } from '@expo/vector-icons'; 
 
 export default function Notifications() {
   const [posts, setPosts] = useState([]);
@@ -92,7 +93,7 @@ export default function Notifications() {
         <TouchableOpacity onPress={() =>{  console.log(item.links[0].url);
     setTempURL(item.links[0].url);
     setOpen(true);}}>
-             <Text>{item.title}</Text>
+             <Text style={{fontSize:20}}>{item.title}</Text>
         </TouchableOpacity>
       </View>
 
@@ -110,12 +111,11 @@ export default function Notifications() {
         onRequestClose={() => setOpen(false)}>
           <View style={styles.modal}>
             <View style={styles.modalHeader}>
-              <View style={styles.modalHeaderContent}>
-               </View>
-              <TouchableOpacity onPress={() => setOpen(false)}>
+            <TouchableOpacity onPress={() => setOpen(false)}>
 
-                <Text style={styles.modalHeaderCloseText}>CLOSE</Text>
-              </TouchableOpacity>
+
+<AntDesign name="doubleleft" size={45} color="black" style={styles.modalHeaderCloseText}/>
+</TouchableOpacity>
             </View>
             <View style={{ flex:1, flexDirection: 'col',width:'100%'}} >
            
@@ -218,10 +218,11 @@ const styles = StyleSheet.create({
     flex: 1
   },
   modalHeaderCloseText: {
-    textAlign: "center",
-    fontSize:20,
+    textAlign: "left",
+    fontSize:30,
     paddingLeft: 5,
-    paddingRight: 5
+    paddingRight: 5,
+    paddingBottom:10
   },
   modalHeaderContent: {
     flexGrow: 1,

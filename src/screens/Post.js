@@ -260,12 +260,7 @@ export default function Post() {
                     style={{width:'100%',marginRight:30}}
                     />
         <View style={{flex:1}}>
-          <View style={{flexDirection:"row",marginLeft:20,marginRight:10}}>
-            <Text style={{textAlign:"left",fontSize:16,marginRight:20}}>
-            దయచేసి మీ సమస్యలను పోస్ట్ చేయండి,  మేము మీ అభిప్రాయాన్ని విలువైనదిగా పరిగణిస్తాము.
-            </Text>
-         
-          </View> 
+        
             <View style={{flexDirection:"row", width:'100%',height:'40%', marginLeft:20,marginTop:-50,alignItems:'center'}}>
                 <TextInput
                 placeholder="దయచేసి ఇక్కడ టైప్ చేయండి"
