@@ -7,6 +7,7 @@ import {useNavigation,StackActions } from "@react-navigation/native";
 import { RefreshControl } from "react-native-gesture-handler";
 import RBSheet from "react-native-raw-bottom-sheet";
 import NewModal from "./NewModal";
+
 import { AntDesign } from '@expo/vector-icons'; 
 
 export default function Notifications() {
@@ -49,6 +50,10 @@ export default function Notifications() {
   function ItemDetails(item){
     
     console.log(item.links[0].url);
+
+   // Mercury.parse(item.links[0].url).then(result => console.log(result));
+
+
     setTempURL(item.links[0].url);
     
   //  this.RBSheet.open();
