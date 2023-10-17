@@ -52,9 +52,9 @@ export const textToSpeech = functions.https.onRequest((request, response) => {
     const effectsProfileId = ['telephony-class-application'];
   
     const request = {
-      input: {text: '1024 rs andinavi,  meekosam samacharamu ivvadam jargindhi'},
-      voice: {languageCode: 'te-IN', ssmlGender:'FEMALE'},
-      audioConfig: {audioEncoding: 'MP3', effectsProfileId: effectsProfileId},
+      input: {text: 'आपको शैलेन्द्र खाबले से 1000 रुपये मिले, धन्यवाद'},
+      voice: {languageCode: 'hi-IN', ssmlGender:'MALE',name:'hi-IN-Standard-C'},
+      audioConfig: {audioEncoding: 'MP3'},
     };
   
     client.synthesizeSpeech(request).then(res=>{
