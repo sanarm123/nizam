@@ -49,7 +49,7 @@ export const textToSpeech = functions.https.onRequest((request, response) => {
     // Add one or more effects profiles to array.
     // Refer to documentation for more details:
     // https://cloud.google.com/text-to-speech/docs/audio-profiles
-    const effectsProfileId = ['telephony-class-application'];
+    // const effectsProfileId = ['telephony-class-application'];
   
     const request = {
       input: {text: 'आपको शैलेन्द्र खाबले से 1000 रुपये मिले, धन्यवाद'},
@@ -58,11 +58,11 @@ export const textToSpeech = functions.https.onRequest((request, response) => {
     };
   
     client.synthesizeSpeech(request).then(res=>{
-    
-    console.log(`Audio content written to file:`+JSON.stringify(res));
-    console.log("Returning "+JSON.stringify(res));
+    //console.log(`Audio content written to file:`+JSON.stringify(res));
+    //console.log("Returning "+JSON.stringify(res));
     response.setHeader('Content-Type','audio/mpeg')
     response.send(res[0].audioContent);
+
 
     }).catch(err=>{
       console.log("Returning "+JSON.stringify(err));

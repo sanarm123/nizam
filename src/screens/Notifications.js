@@ -10,6 +10,8 @@ import NewModal from "./NewModal";
 
 import { AntDesign } from '@expo/vector-icons'; 
 
+
+
 export default function Notifications() {
   const [posts, setPosts] = useState([]);
   const [tempURL, setTempURL] = useState('');
