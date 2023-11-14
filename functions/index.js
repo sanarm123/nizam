@@ -97,9 +97,16 @@ export const ConvertTeluguToEnglish = functions.https.onRequest(async (request, 
 
 
   try {
+
+    console.log(text);
+    
     response.send(text);
 
+
+
   } catch (error) {
+
+    console.log(error);
     response.send(error);
 
   }

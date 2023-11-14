@@ -111,6 +111,9 @@ export const useVoiceRecognition = () => {
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
+
+      //alert('destroyed');
+
     };
   }, []);
 

@@ -70,6 +70,40 @@ export default function Messages({ navigation }) {
     )
   }
 
+
+  const fetchText = async (mytext) => {
+    const response = await fetch(
+      "https://us-central1-myworld-d76d2.cloudfunctions.net/ConvertTeluguToEnglish",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({'text': 'కడుపు నొప్పికి ఏమందులు వాడాలి' }),
+      }
+    );
+    return await response.blob();
+  };
+
+  const handleSubmit = async () => {
+
+    //if (!state.results[0]) return;
+
+    const mytemptext='కడుపు నొప్పికి ఏమందులు';
+   
+  
+
+    try {
+
+      const audioBlob = await fetchText(mytemptext);
+
+      alert(JSON.stringify(audioBlob));
+
+       //reader.readAsDataURL(audioBlob);
+     } catch (e) {
+       console.error("An error occurred:", e);
+     }
+  }
+
+
   
 return (
   <View style={styles.container}>
@@ -80,7 +114,7 @@ return (
       Press and hold this button to record your voice. Release the button to
       send the recording, and you'll hear a response
     </Text>
-    <Text style={styles.welcome}>Your message:{JSON.stringify(state)} </Text>
+    <Text style={styles.welcome}>Your message:{state.results[0]} </Text>
 
 
     <Pressable
@@ -91,7 +125,7 @@ return (
         onPressOut={() => {
            setBorderColor("lightgray");
            stopRecognizing();
-          //handleSubmit();
+           handleSubmit();
         }}
         style={{
           width: "90%",
